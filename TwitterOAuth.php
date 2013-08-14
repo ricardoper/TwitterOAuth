@@ -10,7 +10,13 @@ class TwitterOAuth
 
     protected $config = array();
 
-    protected $params = array();
+    protected $call = '';
+
+    protected $method = 'GET';
+
+    protected $getParams = array();
+
+    protected $postParams = array();
 
 
     public function __construct($config)
@@ -34,89 +40,98 @@ class TwitterOAuth
         unset($defs, $filters);
     }
 
-    public function get($call, $params = null, $format = null)
+    public function get($call, $getParams = null, $format = null)
     {
-        if (!is_null($format)) {
+        $this->call = $call;
+
+        if ($getParams !== null && is_array($getParams)) {
+            $this->getParams = $getParams;
+        }
+
+        if ($format !== null) {
             $this->format = $format;
         }
 
-        if (!is_null($params) && is_array($params)) {
-            $this->params = $params;
-        }
-
-        return $this->processRequest($call);
+        return $this->sendRequest();
     }
 
-    protected function buildUrl($call)
+    protected function getParams($params)
     {
-        return $this->url . $call . '.' . $this->format;
-    }
-
-    protected function getUrl($call)
-    {
-        $url = $this->buildUrl($call);
-
-        $params = $this->params;
-
         $r = '';
 
         ksort($params);
 
         foreach ($params as $key => $value) {
-            $r .= '&' . $key . '=' . $value;
+            $r .= '&' . $key . '=' . urlencode($value);
         }
 
         unset($params, $key, $value);
 
-        return $url . ((empty($r)) ? '' : '?') . $r;
+        return trim($r, '&');
     }
 
-    protected function getOauthRequest()
+    protected function getUrl($withParams = false)
+    {
+        $getParams = '';
+
+        if ($withParams === true) {
+            $getParams = $this->getParams($this->getParams);
+
+            if (!empty($getParams)) {
+                $getParams = '?' . $getParams;
+            }
+        }
+
+        return $this->url . $this->call . '.' . $this->format . $getParams;
+    }
+
+    protected function getOauthParameters()
     {
         $time = time();
 
         return array(
             'oauth_consumer_key' => $this->config['consumer_key'],
-            'oauth_nonce' => $time,
+            'oauth_nonce' => trim(base64_encode($time), '='),
             'oauth_signature_method' => 'HMAC-SHA1',
-            'oauth_token' => $this->config['oauth_token'],
             'oauth_timestamp' => $time,
+            'oauth_token' => $this->config['oauth_token'],
             'oauth_version' => '1.0'
         );
     }
 
-    protected function createBase($method, $call, $oauth)
+    protected function getRequestString()
     {
-        $url = $this->buildUrl($call);
+        $params = array_merge($this->getParams, $this->postParams, $this->getOauthParameters());
 
-        $params = array_merge($this->params, $oauth);
+        $params = $this->getParams($params);
 
-        $r = array();
-
-        ksort($params);
-
-        foreach ($params as $key => $value) {
-            $r[] = $key . '=' . rawurlencode($value);
-        }
-
-        unset($params, $key, $value);
-
-        return $method . '&' . rawurlencode($url) . '&' . rawurlencode(implode('&', $r));
+        return urlencode($params);
     }
 
-    protected function buildSignature($base)
+    protected function getSignatureBaseString()
     {
-        $ckey = rawurlencode($this->config['consumer_secret']) . '&' .
-            rawurlencode($this->config['oauth_token_secret']);
+        $method = strtoupper($this->method);
 
-        return base64_encode(hash_hmac('sha1', $base, $ckey, true));
+        $url = urlencode($this->getUrl());
+
+        return $method . '&' . $url . '&' . $this->getRequestString();
     }
 
-    protected function buildHeaders($oauth, $sign)
+    protected function getSigningKey()
     {
-        $oauth = array_merge($oauth, array('oauth_signature' => $sign));
+        return $this->config['consumer_secret'] . '&' . $this->config['oauth_token_secret'];
+    }
 
-        $r = 'Authorization: OAuth ';
+    protected function calculateSignature()
+    {
+        return base64_encode(hash_hmac('sha1', $this->getSignatureBaseString(), $this->getSigningKey(), true));
+    }
+
+    protected function getOauthString()
+    {
+        $oauth = array_merge($this->getOauthParameters(), array('oauth_signature' => $this->calculateSignature()));
+
+        ksort($oauth);
 
         $values = array();
 
@@ -124,29 +139,38 @@ class TwitterOAuth
             $values[] = $key . '="' . rawurlencode($value) . '"';
         }
 
-        $r .= implode(', ', $values);
+        $oauth = implode(', ', $values);
 
         unset($values, $key, $value);
 
+        return $oauth;
+    }
+
+    protected function buildRequestHeader()
+    {
         return array(
-            $r,
+            'Authorization: OAuth ' . $this->getOauthString(),
             'Expect:'
         );
     }
 
-    protected function sendRequest($url, $headers, $postfields = null)
+    protected function sendRequest()
     {
+        $url = $this->getUrl(true);
+
+        $header = $this->buildRequestHeader();
+
         $options = array(
             CURLOPT_URL => $url,
             CURLOPT_HEADER => false,
-            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_HTTPHEADER => $header,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
         );
 
-        if (!is_null($postfields)) {
+        /* if ($postfields !== null) {
             $options[CURLOPT_POSTFIELDS] = $postfields;
-        }
+        } */
 
         $c = curl_init();
 
@@ -159,22 +183,5 @@ class TwitterOAuth
         unset($options, $c);
 
         return $response;
-    }
-
-    protected function processRequest($call, $method = 'GET', $postfields = null)
-    {
-        $url = $this->getUrl($call);
-
-        $oauth = $this->getOauthRequest();
-
-        $base = $this->createBase($method, $call, $oauth);
-
-        $sign = $this->buildSignature($base);
-
-        $headers = $this->buildHeaders($oauth, $sign);
-
-        unset($oauth, $base, $sign);
-
-        return $this->sendRequest($url, $headers, $postfields);
     }
 }
