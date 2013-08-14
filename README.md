@@ -8,6 +8,7 @@ PHP library to communicate with Twitter OAuth API version 1.1.
 - PHP cURL extension
 
 ## Installation ##
+
 The recommended way to install TwitterOAuth is through [Composer](http://getcomposer.org/):
 
     {
@@ -23,6 +24,7 @@ At the moment, this library **only accepts GET calls**.
 POST calls will be supported in the near future.
 
 ## Example ##
+
 ```php
 <?php
 
@@ -64,3 +66,7 @@ POST calls will be supported in the near future.
 
 	var_dump($response);
 ```
+
+## License ##
+
+Released under the MIT License.
