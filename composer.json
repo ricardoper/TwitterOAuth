@@ -1,0 +1,21 @@
+{
+    "name": "ricardoper/twitteroauth",
+    "type": "library",
+    "description": "PHP library to communicate with Twitter OAuth API version 1.1",
+    "keywords": ["PHP", "Twitter", "OAuth", "API v1.1"],
+    "homepage": "https://github.com/ricardoper",
+    "authors": [
+        {
+            "name": "Ricardo Pereira",
+            "email": "github@ricardopereira.es",
+            "homepage": "http://www.ricardopereira.es"
+        }
+    ],
+    "require": {
+        "php": ">=5.3",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "psr-0": { "TwitterOAuth": "" }
+    }
+}
