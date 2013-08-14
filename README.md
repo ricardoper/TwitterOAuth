@@ -17,8 +17,8 @@ The recommended way to install TwitterOAuth is through [Composer](http://getcomp
 	}
 
 ## Example ##
-```
-    <?php
+```php
+<?php
 
 	use TwitterOAuth\TwitterOAuth;
 
