@@ -12,11 +12,11 @@ PHP library to communicate with Twitter OAuth API version 1.1.
 The recommended way to install TwitterOAuth is through [Composer](http://getcomposer.org/):
 
 ```json
-    {
-	    "require": {
-	        "ricardoper/twitteroauth": "dev-master"
-	    }
-	}
+{
+    "require": {
+        "ricardoper/twitteroauth": "dev-master"
+    }
+}
 ```
 
 ## Notes about this version ##
