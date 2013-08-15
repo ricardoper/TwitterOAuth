@@ -55,6 +55,27 @@ class TwitterOAuth
         return $this->sendRequest();
     }
 
+    public function post($call, $postParams = null, $getParams = null, $format = null)
+    {
+        $this->call = $call;
+
+        $this->method = 'POST';
+
+        if ($postParams !== null && is_array($postParams)) {
+            $this->postParams = $postParams;
+        }
+
+        if ($getParams !== null && is_array($getParams)) {
+            $this->getParams = $getParams;
+        }
+
+        if ($format !== null) {
+            $this->format = $format;
+        }
+
+        return $this->sendRequest();
+    }
+
     protected function getParams($params)
     {
         $r = '';
@@ -62,7 +83,7 @@ class TwitterOAuth
         ksort($params);
 
         foreach ($params as $key => $value) {
-            $r .= '&' . $key . '=' . urlencode($value);
+            $r .= '&' . $key . '=' . rawurlencode($value);
         }
 
         unset($params, $key, $value);
@@ -105,14 +126,14 @@ class TwitterOAuth
 
         $params = $this->getParams($params);
 
-        return urlencode($params);
+        return rawurlencode($params);
     }
 
     protected function getSignatureBaseString()
     {
         $method = strtoupper($this->method);
 
-        $url = urlencode($this->getUrl());
+        $url = rawurlencode($this->getUrl());
 
         return $method . '&' . $url . '&' . $this->getRequestString();
     }
@@ -168,9 +189,10 @@ class TwitterOAuth
             CURLOPT_SSL_VERIFYPEER => false,
         );
 
-        /* if ($postfields !== null) {
-            $options[CURLOPT_POSTFIELDS] = $postfields;
-        } */
+        if (!empty($this->postParams)) {
+            $options[CURLOPT_POST] = count($this->postParams);
+            $options[CURLOPT_POSTFIELDS] = $this->getParams($this->postParams);
+        }
 
         $c = curl_init();
 
