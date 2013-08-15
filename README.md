@@ -19,12 +19,6 @@ The recommended way to install TwitterOAuth is through [Composer](http://getcomp
 }
 ```
 
-## Notes about this version ##
-
-At the moment, this library **only accepts GET calls**.
-
-POST calls will be supported in the near future.
-
 ## Example ##
 
 ```php
