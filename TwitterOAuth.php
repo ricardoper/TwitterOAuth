@@ -41,7 +41,7 @@ class TwitterOAuth
             'oauth_token_secret' => ''
         );
 
-        if (count(array_intersect_key($keys, $config)) !== 4) {
+        if (count(array_intersect_key($keys, $config)) !== count($keys)) {
             throw new \Exception('Missing parameters in configuration array');
         }
 
