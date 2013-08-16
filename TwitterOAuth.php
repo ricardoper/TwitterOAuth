@@ -34,23 +34,20 @@ class TwitterOAuth
      */
     public function __construct(array $config)
     {
-        $defs = array(
+        $keys = array(
             'consumer_key' => '',
             'consumer_secret' => '',
             'oauth_token' => '',
-            'oauth_token_secret' => '',
+            'oauth_token_secret' => ''
         );
 
-        $filters = array(
-            'consumer_key' => FILTER_SANITIZE_STRING,
-            'consumer_secret' => FILTER_SANITIZE_STRING,
-            'oauth_token' => FILTER_SANITIZE_STRING,
-            'oauth_token_secret' => FILTER_SANITIZE_STRING,
-        );
+        if (count(array_intersect_key($keys, $config)) !== 4) {
+            throw new \Exception('Missing parameters in configuration array');
+        }
 
-        $this->config = filter_var_array(array_merge($defs, $config), $filters);
+        $this->config = $config;
 
-        unset($defs, $filters);
+        unset($keys, $config);
     }
 
     /**
