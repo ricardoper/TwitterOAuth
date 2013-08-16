@@ -2,6 +2,11 @@
 
 PHP library to communicate with Twitter OAuth API version 1.1.
 
+- Namespaced
+- PHP 5.3
+- [PSR-2](http://www.php-fig.org/psr/2/ "PHP Framework Interop Group")
+- OOP
+
 ## Requirements ##
 
 - PHP Version >= 5.3
@@ -45,6 +50,7 @@ The recommended way to install TwitterOAuth is through [Composer](http://getcomp
 	 */
 	$tw = new TwitterOAuth($config);
 
+
 	/**
 	 * Returns a collection of the most recent Tweets posted by the user
 	 * https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
@@ -59,6 +65,24 @@ The recommended way to install TwitterOAuth is through [Composer](http://getcomp
 	 * Send a GET call with set parameters
 	 */
 	$response = $tw->get('statuses/user_timeline', $params);
+
+	var_dump($response);
+
+
+	/**
+	 * Creates a new list for the authenticated user
+	 * https://dev.twitter.com/docs/api/1.1/post/lists/create
+	 */
+	$params = array(
+	    'name' => 'TwOAuth',
+	    'mode' => 'private',
+	    'description' => 'Test List',
+	);
+
+	/**
+	 * Send a POST call with set parameters
+	 */
+	$response = $tw->post('lists/create', $params);
 
 	var_dump($response);
 ```
