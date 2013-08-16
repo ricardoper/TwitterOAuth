@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * TwitterOAuth - https://github.com/ricardoper/TwitterOAuth
+ * PHP library to communicate with Twitter OAuth API version 1.1
+ *
+ * @author Ricardo Pereira <github@ricardopereira.es>
+ * @copyright 2013
+ */
+
 namespace TwitterOAuth;
 
 class TwitterOAuth
@@ -19,7 +27,12 @@ class TwitterOAuth
     protected $postParams = array();
 
 
-    public function __construct($config)
+    /**
+     * Prepare a new conection with Twitter API via OAuth
+     *
+     * @params array $config Configuration array with OAuth access data
+     */
+    public function __construct(array $config)
     {
         $defs = array(
             'consumer_key' => '',
@@ -40,7 +53,14 @@ class TwitterOAuth
         unset($defs, $filters);
     }
 
-    public function get($call, $getParams = null, $format = null)
+    /**
+     * Send a GET call to Twitter API via OAuth
+     *
+     * @params string $call Twitter resource string
+     * @params array $getParams GET parameters to send
+     * @params string $format Set the response format
+     */
+    public function get($call, array $getParams = null, $format = null)
     {
         $this->call = $call;
 
@@ -55,7 +75,15 @@ class TwitterOAuth
         return $this->sendRequest();
     }
 
-    public function post($call, $postParams = null, $getParams = null, $format = null)
+    /**
+     * Send a POST call to Twitter API via OAuth
+     *
+     * @params string $call Twitter resource string
+     * @params array $postParams POST parameters to send
+     * @params array $getParams GET parameters to send
+     * @params string $format Set the response format
+     */
+    public function post($call, array $postParams = null, array $getParams = null, $format = null)
     {
         $this->call = $call;
 
@@ -76,7 +104,13 @@ class TwitterOAuth
         return $this->sendRequest();
     }
 
-    protected function getParams($params)
+    /**
+     * Converting parameters array to a single string with encoded values
+     *
+     * @param array $params Input parameters
+     * @return string Single string with encoded values
+     */
+    protected function getParams(array $params)
     {
         $r = '';
 
@@ -91,6 +125,12 @@ class TwitterOAuth
         return trim($r, '&');
     }
 
+    /**
+     * Getting full URL from a Twitter resource and format
+     *
+     * @param bool $withParams If true then parameters will be outputted
+     * @return string Full URL
+     */
     protected function getUrl($withParams = false)
     {
         $getParams = '';
@@ -106,6 +146,11 @@ class TwitterOAuth
         return $this->url . $this->call . '.' . $this->format . $getParams;
     }
 
+    /**
+     * Getting OAuth parameters to be used in request headers
+     *
+     * @return array OAuth parameters
+     */
     protected function getOauthParameters()
     {
         $time = time();
@@ -120,6 +165,11 @@ class TwitterOAuth
         );
     }
 
+    /**
+     * Converting all parameters arrays to a single string with encoded values
+     *
+     * @return string Single string with encoded values
+     */
     protected function getRequestString()
     {
         $params = array_merge($this->getParams, $this->postParams, $this->getOauthParameters());
@@ -129,6 +179,11 @@ class TwitterOAuth
         return rawurlencode($params);
     }
 
+    /**
+     * Getting OAuth signature base string
+     *
+     * @return string OAuth signature base string
+     */
     protected function getSignatureBaseString()
     {
         $method = strtoupper($this->method);
@@ -138,16 +193,31 @@ class TwitterOAuth
         return $method . '&' . $url . '&' . $this->getRequestString();
     }
 
+    /**
+     * Getting a signing key
+     *
+     * @return string Signing key
+     */
     protected function getSigningKey()
     {
         return $this->config['consumer_secret'] . '&' . $this->config['oauth_token_secret'];
     }
 
+    /**
+     * Calculating the signature
+     *
+     * @return string Signature
+     */
     protected function calculateSignature()
     {
         return base64_encode(hash_hmac('sha1', $this->getSignatureBaseString(), $this->getSigningKey(), true));
     }
 
+    /**
+     * Converting OAuth parameters array to a single string with encoded values
+     *
+     * @return string Single string with encoded values
+     */
     protected function getOauthString()
     {
         $oauth = array_merge($this->getOauthParameters(), array('oauth_signature' => $this->calculateSignature()));
@@ -167,6 +237,11 @@ class TwitterOAuth
         return $oauth;
     }
 
+    /**
+     * Building request HTTP headers
+     *
+     * @return array HTTP headers
+     */
     protected function buildRequestHeader()
     {
         return array(
@@ -175,6 +250,11 @@ class TwitterOAuth
         );
     }
 
+    /**
+     *  Send GET or POST requests to Twitter API
+     *
+     * @return mixed Response output with the selected format
+     */
     protected function sendRequest()
     {
         $url = $this->getUrl(true);
