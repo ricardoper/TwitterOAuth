@@ -250,6 +250,7 @@ class TwitterOAuth
     /**
      *  Send GET or POST requests to Twitter API
      *
+     * @throws Exception\TwitterException
      * @return mixed Response output with the selected format
      */
     protected function sendRequest()
@@ -281,6 +282,14 @@ class TwitterOAuth
 
         unset($options, $c);
 
+        $response = json_decode($response);
+        
+        if(isset($response->errors)) {
+            foreach($response->errors as $error) {
+                throw new TwitterException($error->message, $error->code);
+            }
+        }
+        
         return $response;
     }
 }
