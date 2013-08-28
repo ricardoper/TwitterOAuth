@@ -10,6 +10,8 @@
 
 namespace TwitterOAuth;
 
+use TwitterOAuth\Exception\TwitterException;
+
 class TwitterOAuth
 {
     protected $url = 'https://api.twitter.com/1.1/';
@@ -283,13 +285,13 @@ class TwitterOAuth
         unset($options, $c);
 
         $response = json_decode($response);
-        
+
         if(isset($response->errors)) {
             foreach($response->errors as $error) {
                 throw new TwitterException($error->message, $error->code);
             }
         }
-        
+
         return $response;
     }
 }
