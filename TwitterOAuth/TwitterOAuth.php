@@ -16,8 +16,6 @@ class TwitterOAuth
 {
     protected $url = 'https://api.twitter.com/1.1/';
 
-    protected $format = 'json';
-
     protected $config = array();
 
     protected $call = '';
@@ -27,6 +25,8 @@ class TwitterOAuth
     protected $getParams = array();
 
     protected $postParams = array();
+
+    protected $arrayOutput = false;
 
 
     /**
@@ -55,11 +55,12 @@ class TwitterOAuth
     /**
      * Send a GET call to Twitter API via OAuth
      *
-     * @params string $call Twitter resource string
-     * @params array $getParams GET parameters to send
-     * @params string $format Set the response format
+     * @param $call Twitter resource string
+     * @param array $getParams GET parameters to send
+     * @param bool $arrayOutput Output format (false = Object | true = Array)
+     * @return mixed Output with selected format
      */
-    public function get($call, array $getParams = null, $format = null)
+    public function get($call, array $getParams = null, $arrayOutput = false)
     {
         $this->call = $call;
 
@@ -67,8 +68,8 @@ class TwitterOAuth
             $this->getParams = $getParams;
         }
 
-        if ($format !== null) {
-            $this->format = $format;
+        if ($arrayOutput !== false) {
+            $this->arrayOutput = true;
         }
 
         return $this->sendRequest();
@@ -77,12 +78,13 @@ class TwitterOAuth
     /**
      * Send a POST call to Twitter API via OAuth
      *
-     * @params string $call Twitter resource string
-     * @params array $postParams POST parameters to send
-     * @params array $getParams GET parameters to send
-     * @params string $format Set the response format
+     * @param $call Twitter resource string
+     * @param array $postParams POST parameters to send
+     * @param array $getParams GET parameters to send
+     * @param bool $arrayOutput Output format (false = Object | true = Array)
+     * @return mixed Output with selected format
      */
-    public function post($call, array $postParams = null, array $getParams = null, $format = null)
+    public function post($call, array $postParams = null, array $getParams = null, $arrayOutput = false)
     {
         $this->call = $call;
 
@@ -96,8 +98,8 @@ class TwitterOAuth
             $this->getParams = $getParams;
         }
 
-        if ($format !== null) {
-            $this->format = $format;
+        if ($arrayOutput !== false) {
+            $this->arrayOutput = true;
         }
 
         return $this->sendRequest();
@@ -125,7 +127,7 @@ class TwitterOAuth
     }
 
     /**
-     * Getting full URL from a Twitter resource and format
+     * Getting full URL from a Twitter resource
      *
      * @param bool $withParams If true then parameters will be outputted
      * @return string Full URL
@@ -142,7 +144,7 @@ class TwitterOAuth
             }
         }
 
-        return $this->url . $this->call . '.' . $this->format . $getParams;
+        return $this->url . $this->call . '.json' . $getParams;
     }
 
     /**
@@ -253,7 +255,7 @@ class TwitterOAuth
      *  Send GET or POST requests to Twitter API
      *
      * @throws Exception\TwitterException
-     * @return mixed Response output with the selected format
+     * @return mixed Response output
      */
     protected function sendRequest()
     {
@@ -284,11 +286,19 @@ class TwitterOAuth
 
         unset($options, $c);
 
-        $response = json_decode($response);
+        if (!in_array($response[0], array('{', '['))) {
+            throw new TwitterException(str_replace(array("\n", "\r", "\t"), '', strip_tags($response)), 0);
+        }
 
-        if(isset($response->errors)) {
-            foreach($response->errors as $error) {
+        $response = json_decode($response, $this->arrayOutput);
+
+        if (!$this->arrayOutput && isset($response->errors)) {
+            foreach ($response->errors as $error) {
                 throw new TwitterException($error->message, $error->code);
+            }
+        } elseif ($this->arrayOutput && isset($response['errors'])) {
+            foreach ($response['errors'] as $error) {
+                throw new TwitterException($error['message'], $error['code']);
             }
         }
 
