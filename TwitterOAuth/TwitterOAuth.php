@@ -55,7 +55,7 @@ class TwitterOAuth
     /**
      * Send a GET call to Twitter API via OAuth
      *
-     * @param $call Twitter resource string
+     * @param $call $string Twitter resource string
      * @param array $getParams GET parameters to send
      * @param bool $arrayOutput Output format (false = Object | true = Array)
      * @return mixed Output with selected format
@@ -78,7 +78,7 @@ class TwitterOAuth
     /**
      * Send a POST call to Twitter API via OAuth
      *
-     * @param $call Twitter resource string
+     * @param $call $string Twitter resource string
      * @param array $postParams POST parameters to send
      * @param array $getParams GET parameters to send
      * @param bool $arrayOutput Output format (false = Object | true = Array)
