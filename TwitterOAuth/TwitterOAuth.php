@@ -16,6 +16,10 @@ class TwitterOAuth
 {
     protected $url = 'https://api.twitter.com/1.1/';
 
+    protected $outputFormats = array('text', 'json', 'array', 'object');
+
+    protected $defaultFormat = 'object';
+
     protected $config = array();
 
     protected $call = '';
@@ -26,8 +30,6 @@ class TwitterOAuth
 
     protected $postParams = array();
 
-    protected $arrayOutput = false;
-
 
     /**
      * Prepare a new conection with Twitter API via OAuth
@@ -36,20 +38,24 @@ class TwitterOAuth
      */
     public function __construct(array $config)
     {
-        $keys = array(
+        $required = array(
             'consumer_key' => '',
             'consumer_secret' => '',
             'oauth_token' => '',
             'oauth_token_secret' => ''
         );
 
-        if (count(array_intersect_key($keys, $config)) !== count($keys)) {
+        if (count(array_intersect_key($required, $config)) !== count($required)) {
             throw new \Exception('Missing parameters in configuration array');
+        }
+
+        if (!isset($config['output_format']) || !in_array($config['output_format'], $this->outputFormats)) {
+            $config['output_format'] = $this->defaultFormat;
         }
 
         $this->config = $config;
 
-        unset($keys, $config);
+        unset($required, $config);
     }
 
     /**
@@ -57,19 +63,14 @@ class TwitterOAuth
      *
      * @param string $call Twitter resource string
      * @param array $getParams GET parameters to send
-     * @param bool $arrayOutput Output format (false = Object | true = Array)
      * @return mixed Output with selected format
      */
-    public function get($call, array $getParams = null, $arrayOutput = false)
+    public function get($call, array $getParams = null)
     {
         $this->call = $call;
 
         if ($getParams !== null && is_array($getParams)) {
             $this->getParams = $getParams;
-        }
-
-        if ($arrayOutput !== false) {
-            $this->arrayOutput = true;
         }
 
         return $this->sendRequest();
@@ -81,10 +82,9 @@ class TwitterOAuth
      * @param string $call Twitter resource string
      * @param array $postParams POST parameters to send
      * @param array $getParams GET parameters to send
-     * @param bool $arrayOutput Output format (false = Object | true = Array)
      * @return mixed Output with selected format
      */
-    public function post($call, array $postParams = null, array $getParams = null, $arrayOutput = false)
+    public function post($call, array $postParams = null, array $getParams = null)
     {
         $this->call = $call;
 
@@ -96,10 +96,6 @@ class TwitterOAuth
 
         if ($getParams !== null && is_array($getParams)) {
             $this->getParams = $getParams;
-        }
-
-        if ($arrayOutput !== false) {
-            $this->arrayOutput = true;
         }
 
         return $this->sendRequest();
@@ -252,6 +248,89 @@ class TwitterOAuth
     }
 
     /**
+     * Processing Twitter Exceptions in case of error
+     *
+     * @param string $type Depends of response format (array|object)
+     * @param mixed $ex Exceptions
+     * @throws Exception\TwitterException
+     */
+    protected function processExceptions($type, $ex)
+    {
+        switch ($type) {
+            case 'array':
+                foreach ($ex['errors'] as $error) {
+                    throw new TwitterException($error['message'], $error['code']);
+                }
+
+                break;
+
+            default:
+                foreach ($ex->errors as $error) {
+                    throw new TwitterException($error->message, $error->code);
+                }
+        }
+
+        unset($tupe, $ex, $error);
+    }
+
+    /**
+     * Outputs the response in the selected format
+     *
+     * @param string $response
+     * @return mixed
+     */
+    protected function processOutput($response)
+    {
+        $format = $this->config['output_format'];
+
+        switch ($format) {
+            case 'text':
+                if (substr($response, 2, 6) == 'errors') {
+                    $response = json_decode($response);
+
+                    $this->processExceptions('object', $response);
+                }
+
+                break;
+
+            case 'json':
+                if (!headers_sent()) {
+                    header('Cache-Control: no-cache, must-revalidate');
+                    header('Expires: Tue, 19 May 1981 00:00:00 GMT');
+                    header('Content-type: application/json');
+                }
+
+                if (substr($response, 2, 6) == 'errors') {
+                    $response = json_decode($response);
+
+                    $this->processExceptions('object', $response);
+                }
+
+                break;
+
+            case 'array':
+                $response = json_decode($response, true);
+
+                if (isset($response['errors'])) {
+                    $this->processExceptions('array', $response);
+                }
+
+                break;
+
+            default:
+                $response = json_decode($response);
+
+                if (isset($response->errors)) {
+                    $this->processExceptions('object', $response);
+                }
+        }
+
+        unset($format);
+
+        return $response;
+    }
+
+    /**
      *  Send GET or POST requests to Twitter API
      *
      * @throws Exception\TwitterException
@@ -290,18 +369,6 @@ class TwitterOAuth
             throw new TwitterException(str_replace(array("\n", "\r", "\t"), '', strip_tags($response)), 0);
         }
 
-        $response = json_decode($response, $this->arrayOutput);
-
-        if (!$this->arrayOutput && isset($response->errors)) {
-            foreach ($response->errors as $error) {
-                throw new TwitterException($error->message, $error->code);
-            }
-        } elseif ($this->arrayOutput && isset($response['errors'])) {
-            foreach ($response['errors'] as $error) {
-                throw new TwitterException($error['message'], $error['code']);
-            }
-        }
-
-        return $response;
+        return $this->processOutput($response);
     }
 }
