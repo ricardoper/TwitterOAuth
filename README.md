@@ -4,7 +4,8 @@ PHP library to communicate with Twitter OAuth API version 1.1.
 
 - Namespaced
 - PHP 5.3
-- [PSR-2](http://www.php-fig.org/psr/2/ "PHP Framework Interop Group")
+- [PSR-0](http://www.php-fig.org/psr/psr-0/ "PHP Framework Interop Group")
+- [PSR-2](http://www.php-fig.org/psr/psr-2/ "PHP Framework Interop Group")
 - OOP
 
 ## Requirements ##
