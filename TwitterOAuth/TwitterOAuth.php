@@ -270,7 +270,7 @@ class TwitterOAuth
                 }
         }
 
-        unset($tupe, $ex, $error);
+        unset($type, $ex, $error);
     }
 
     /**
