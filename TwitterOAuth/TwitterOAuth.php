@@ -369,6 +369,10 @@ class TwitterOAuth
             throw new TwitterException(str_replace(array("\n", "\r", "\t"), '', strip_tags($response)), 0);
         }
 
+        // reset some stuff
+        $this->postParams = array();
+        $this->method = 'GET';
+
         return $this->processOutput($response);
     }
 }
