@@ -16,6 +16,8 @@ class TwitterOAuth
 {
     protected $url = 'https://api.twitter.com/1.1/';
 
+    protected $auth_url = 'https://api.twitter.com/';
+
     protected $outputFormats = array('text', 'json', 'array', 'object');
 
     protected $defaultFormat = 'object';
@@ -30,6 +32,10 @@ class TwitterOAuth
 
     protected $postParams = array();
 
+    protected $encoded_bearer_credentials = null;
+
+    protected $bearer_access_token = null;
+
 
     /**
      * Prepare a new conection with Twitter API via OAuth
@@ -41,9 +47,6 @@ class TwitterOAuth
         $required = array(
             'consumer_key' => '',
             'consumer_secret' => '',
-            // removed for app-only token support
-            # 'oauth_token' => '',
-            # 'oauth_token_secret' => ''
         );
 
         if (count(array_intersect_key($required, $config)) !== count($required)) {
@@ -141,12 +144,9 @@ class TwitterOAuth
             }
         }
 
-        if( $this->encoded_bearer_credentials && !$this->bearer_access_token )
-        {
-            $url = "https://api.twitter.com/" . $this->call;
-        }
-        else
-        {
+        if ($this->encoded_bearer_credentials && !$this->bearer_access_token) {
+            $url = $this->auth_url . $this->call;
+        } else {
             $url = $this->url . $this->call . '.json' . $getParams;
         }
 
@@ -260,20 +260,18 @@ class TwitterOAuth
      */
     protected function buildRequestHeader()
     {
-        if( $this->encoded_bearer_credentials )
-        {
-            if( $this->bearer_access_token )
-            {
-                // BearerTokenHeaders
-                return array( "Authorization: Bearer " . $this->bearer_access_token );
-            }else{
-                // BearerCredentialHeaders
+        if ($this->encoded_bearer_credentials) {
+            if ($this->bearer_access_token) {
+                return array( 
+                    "Authorization: Bearer " . $this->bearer_access_token
+                );
+            } else {
                 return array(
                     "Authorization: Basic " . $this->encoded_bearer_credentials, 
                     "Content-Type: application/x-www-form-urlencoded;charset=UTF-8"
                 );
             }
-        }else{
+        } else {
             // OAuth headers
             return array(
                 'Authorization: OAuth ' . $this->getOauthString(),
@@ -412,55 +410,57 @@ class TwitterOAuth
     }
 
 
-
     /**
-    * Application-only authentication
-    * https://dev.twitter.com/docs/auth/application-only-auth
-    */
-    
-    public $encoded_bearer_credentials = null;
-    public $bearer_access_token = null;
-
-    // ----------------------------------------------
-    function setBearerToken($token)
+     * Application-only / bearer-token authentication
+     * https://dev.twitter.com/docs/auth/application-only-auth
+     *
+     * @params string $token bearer-token
+     */
+    public function setBearerToken($token)
     {
         $this->bearer_access_token = $token;
         $this->generateEncodedBearerCredentials();
     }
 
-    // ----------------------------------------------
-    function getBearerToken()
+    /**
+     *  Get an application-only token from consumer keys
+     *
+     * @return string bearer access-token
+     */
+    public function getBearerToken()
     {
         $this->generateEncodedBearerCredentials();
         $this->bearer_access_token = null;
-        $response = $this->post( "oauth2/token", array("grant_type" => "client_credentials"));
+        $response = $this->post("oauth2/token", array("grant_type" => "client_credentials"));
 
-        if( isset($response->token_type) && $response->token_type == "bearer" )
-        {   
+        if (isset($response->token_type) && $response->token_type == "bearer") {   
             $this->bearer_access_token = $response->access_token;
         }
         return $this->bearer_access_token;
     }
 
-    // ----------------------------------------------
-    function invalidateBearerToken($token)
+    /**
+     *  Revoke / invalidate a token
+     *
+     * @params string $token bearer-token
+     * @return string Returns the token if succesful invalidated
+     */
+    public function invalidateBearerToken($token)
     {
         $this->generateEncodedBearerCredentials();
         $this->bearer_access_token = null;
-        $response = $this->post( "oauth2/invalidate_token", array("access_token" => rawurldecode($token)));
+        $response = $this->post("oauth2/invalidate_token", array("access_token" => rawurldecode($token)));
 
-        if( isset($response->access_token) && $response->access_token == $token )
-        {   
+        if (isset($response->access_token) && $response->access_token == $token) {   
             return $response->access_token;
         }
     }
 
-    // ----------------------------------------------
-    function generateEncodedBearerCredentials()
+    protected function generateEncodedBearerCredentials()
     {
-        $bearer_credentials = urlencode($this->config['consumer_key']) . ":" . urlencode($this->config['consumer_secret'] );
+        $bearer_credentials = urlencode($this->config['consumer_key']) . ":" . urlencode($this->config['consumer_secret']);
 
-        $this->encoded_bearer_credentials = base64_encode( $bearer_credentials );
+        $this->encoded_bearer_credentials = base64_encode($bearer_credentials);
     }
 
 
