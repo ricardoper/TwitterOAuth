@@ -40,7 +40,11 @@ class TwitterOAuth
     /**
      * Prepare a new conection with Twitter API via OAuth
      *
-     * @params array $config Configuration array with OAuth access data
+     * The application ``consumer_key`` and ``consumer_key_secret`` are required 
+     * for most actions, unless when using application-only authentication with a bearer-token.
+     * The ``oauth_token`` and ``oauth_token_secret`` are required for user type actions.
+     *
+     * @param array $config Configuration array with OAuth access data
      */
     public function __construct(array $config)
     {
@@ -411,10 +415,13 @@ class TwitterOAuth
 
 
     /**
-     * Application-only / bearer-token authentication
+     * Set an Application-only bearer-token
+     *
+     * When set, API-requests will use the app-token 
+     * instead of OAuth consumer keys. 
      * https://dev.twitter.com/docs/auth/application-only-auth
      *
-     * @params string $token bearer-token
+     * @param string $token bearer-token
      */
     public function setBearerToken($token)
     {
@@ -425,7 +432,7 @@ class TwitterOAuth
     /**
      *  Get an application-only token from consumer keys
      *
-     * @return string bearer access-token
+     * @return string Returns access-token on success
      */
     public function getBearerToken()
     {
@@ -440,10 +447,10 @@ class TwitterOAuth
     }
 
     /**
-     *  Revoke / invalidate a token
+     *  Revoke / invalidate an application-only token
      *
-     * @params string $token bearer-token
-     * @return string Returns the token if succesful invalidated
+     * @param string $token Bearer-token
+     * @return string Returns the same token on success
      */
     public function invalidateBearerToken($token)
     {
