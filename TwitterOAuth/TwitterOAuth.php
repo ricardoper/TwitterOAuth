@@ -16,6 +16,8 @@ class TwitterOAuth
 {
     protected $url = 'https://api.twitter.com/1.1/';
 
+    protected $auth_url = 'https://api.twitter.com/';
+
     protected $outputFormats = array('text', 'json', 'array', 'object');
 
     protected $defaultFormat = 'object';
@@ -30,19 +32,25 @@ class TwitterOAuth
 
     protected $postParams = array();
 
+    protected $encoded_bearer_credentials = null;
+
+    protected $bearer_access_token = null;
+
 
     /**
      * Prepare a new conection with Twitter API via OAuth
      *
-     * @params array $config Configuration array with OAuth access data
+     * The application ``consumer_key`` and ``consumer_key_secret`` are required 
+     * for most actions, unless when using application-only authentication with a bearer-token.
+     * The ``oauth_token`` and ``oauth_token_secret`` are required for user type actions.
+     *
+     * @param array $config Configuration array with OAuth access data
      */
     public function __construct(array $config)
     {
         $required = array(
             'consumer_key' => '',
             'consumer_secret' => '',
-            'oauth_token' => '',
-            'oauth_token_secret' => ''
         );
 
         if (count(array_intersect_key($required, $config)) !== count($required)) {
@@ -140,7 +148,13 @@ class TwitterOAuth
             }
         }
 
-        return $this->url . $this->call . '.json' . $getParams;
+        if ($this->encoded_bearer_credentials && !$this->bearer_access_token) {
+            $url = $this->auth_url . $this->call;
+        } else {
+            $url = $this->url . $this->call . '.json' . $getParams;
+        }
+
+        return $url;
     }
 
     /**
@@ -217,6 +231,15 @@ class TwitterOAuth
      */
     protected function getOauthString()
     {
+        // User-keys check moved here for app-only token support
+        $required = array(
+            'oauth_token' => '',
+            'oauth_token_secret' => ''
+        );
+        if (count(array_intersect_key($required, $this->config)) !== count($required)) {
+            throw new \Exception('Missing parameters in configuration array');
+        }
+
         $oauth = array_merge($this->getOauthParameters(), array('oauth_signature' => $this->calculateSignature()));
 
         ksort($oauth);
@@ -241,10 +264,24 @@ class TwitterOAuth
      */
     protected function buildRequestHeader()
     {
-        return array(
-            'Authorization: OAuth ' . $this->getOauthString(),
-            'Expect:'
-        );
+        if ($this->encoded_bearer_credentials) {
+            if ($this->bearer_access_token) {
+                return array( 
+                    "Authorization: Bearer " . $this->bearer_access_token
+                );
+            } else {
+                return array(
+                    "Authorization: Basic " . $this->encoded_bearer_credentials, 
+                    "Content-Type: application/x-www-form-urlencoded;charset=UTF-8"
+                );
+            }
+        } else {
+            // OAuth headers
+            return array(
+                'Authorization: OAuth ' . $this->getOauthString(),
+                'Expect:'
+            );
+        }
     }
 
     /**
@@ -270,7 +307,7 @@ class TwitterOAuth
                 }
         }
 
-        unset($tupe, $ex, $error);
+        unset($type, $ex, $error);
     }
 
     /**
@@ -369,6 +406,69 @@ class TwitterOAuth
             throw new TwitterException(str_replace(array("\n", "\r", "\t"), '', strip_tags($response)), 0);
         }
 
+        // reset some stuff
+        $this->postParams = array();
+        $this->method = 'GET';
+
         return $this->processOutput($response);
     }
+
+
+    /**
+     * Set an Application-only bearer-token
+     *
+     * When set, API-requests will use the app-token 
+     * instead of OAuth consumer keys. 
+     * https://dev.twitter.com/docs/auth/application-only-auth
+     *
+     * @param string $token bearer-token
+     */
+    public function setBearerToken($token)
+    {
+        $this->bearer_access_token = $token;
+        $this->generateEncodedBearerCredentials();
+    }
+
+    /**
+     *  Get an application-only token from consumer keys
+     *
+     * @return string Returns access-token on success
+     */
+    public function getBearerToken()
+    {
+        $this->generateEncodedBearerCredentials();
+        $this->bearer_access_token = null;
+        $response = $this->post("oauth2/token", array("grant_type" => "client_credentials"));
+
+        if (isset($response->token_type) && $response->token_type == "bearer") {   
+            $this->bearer_access_token = $response->access_token;
+        }
+        return $this->bearer_access_token;
+    }
+
+    /**
+     *  Revoke / invalidate an application-only token
+     *
+     * @param string $token Bearer-token
+     * @return string Returns the same token on success
+     */
+    public function invalidateBearerToken($token)
+    {
+        $this->generateEncodedBearerCredentials();
+        $this->bearer_access_token = null;
+        $response = $this->post("oauth2/invalidate_token", array("access_token" => rawurldecode($token)));
+
+        if (isset($response->access_token) && $response->access_token == $token) {   
+            return $response->access_token;
+        }
+    }
+
+    protected function generateEncodedBearerCredentials()
+    {
+        $bearer_credentials = urlencode($this->config['consumer_key']) . ":" . urlencode($this->config['consumer_secret']);
+
+        $this->encoded_bearer_credentials = base64_encode($bearer_credentials);
+    }
+
+
 }
