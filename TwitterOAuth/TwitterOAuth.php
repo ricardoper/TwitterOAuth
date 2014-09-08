@@ -134,6 +134,19 @@ class TwitterOAuth
     }
 
     /**
+     * Returns response headers as array.
+     * This can be useful to avoid extra requests for rate-limit info
+     *   x-rate-limit-limit      (max request per period)
+     *   x-rate-limit-remaining  (remaining this period)
+     *   x-rate-limit-reset      (start of next period, UTC timestamp)
+     *
+     * @return array with http_code and header lines
+     */
+    public function getHeaders() {
+        return $this->headers;
+    }
+
+    /**
      * Converting parameters array to a single string with encoded values
      *
      * @param array $params Input parameters
@@ -392,6 +405,34 @@ class TwitterOAuth
     }
 
     /**
+     * Process curl headers to array
+     */
+    protected function processCurlHeaders($headerContent)
+    {
+        $this->headers = array();
+
+        // Split the string on every "double" new line (multiple headers).
+        $arrRequests = explode("\r\n\r\n", $headerContent);
+
+        // Loop of response headers. The "count() -1" is to 
+        // skip an empty row for the extra line break before the body of the response.
+        for ($index = 0; $foo = count($arrRequests) -1, $index < $foo; $index++) {
+
+            foreach (explode("\r\n", $arrRequests[$index]) as $i => $line)
+            {
+                if ($i === 0)
+                    $this->headers[$index]['http_code'] = $line;
+                else
+                {
+                    list ($key, $value) = explode(': ', $line);
+                    $this->headers[$index][$key] = $value;
+                }
+            }
+        }
+    }
+
+
+    /**
      *  Send GET or POST requests to Twitter API
      *
      * @throws Exception\TwitterException
@@ -405,7 +446,7 @@ class TwitterOAuth
 
         $options = array(
             CURLOPT_URL => $url,
-            CURLOPT_HEADER => false,
+            CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => $header,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
@@ -420,11 +461,17 @@ class TwitterOAuth
 
         curl_setopt_array($c, $options);
 
-        $this->response = curl_exec($c);
+        $response = curl_exec($c);
+
+        $header_size = curl_getinfo($c, CURLINFO_HEADER_SIZE);
+        $headers = substr($response, 0, $header_size);
+        $this->processCurlHeaders($headers);
+
+        $this->response = substr($response, $header_size);
 
         curl_close($c);
 
-        unset($options, $c);
+        unset($response, $options, $c);
 
         if (!in_array($this->response[0], array('{', '['))) {
             throw new TwitterException(str_replace(array("\n", "\r", "\t"), '', $url.' : '.strip_tags($this->response)), 0);
