@@ -420,17 +420,17 @@ class TwitterOAuth
 
         curl_setopt_array($c, $options);
 
-        $response = curl_exec($c);
+        $this->response = curl_exec($c);
 
         curl_close($c);
 
         unset($options, $c);
 
-        if (!in_array($response[0], array('{', '['))) {
-            throw new TwitterException(str_replace(array("\n", "\r", "\t"), '', strip_tags($response)), 0);
+        if (!in_array($this->response[0], array('{', '['))) {
+            throw new TwitterException(str_replace(array("\n", "\r", "\t"), '', $url.' : '.strip_tags($this->response)), 0);
         }
 
-        return $this->processOutput($response);
+        return $this->processOutput($this->response);
     }
 
 
@@ -441,12 +441,17 @@ class TwitterOAuth
      * instead of OAuth consumer keys. 
      * https://dev.twitter.com/docs/auth/application-only-auth
      *
+     * @throws Exception
      * @param string $token bearer-token
      */
-    public function setBearerToken($token)
+    public function setBearerToken($token = null)
     {
-        $this->bearer_access_token = $token;
+        if (empty($token)) {
+            throw new \Exception('Token invalid (empty)');
+        }
+
         $this->generateEncodedBearerCredentials();
+        $this->bearer_access_token = $token;
     }
 
     /**
@@ -455,14 +460,13 @@ class TwitterOAuth
      * @return string Returns access-token on success
      */
     public function getBearerToken()
-    {
+    {        
         $this->generateEncodedBearerCredentials();
-        $this->bearer_access_token = null;
-        $response = $this->post("oauth2/token", array("grant_type" => "client_credentials"));
 
-        if (isset($response->token_type) && $response->token_type == "bearer") {   
-            $this->bearer_access_token = $response->access_token;
-        }
+        $this->post('oauth2/token', array('grant_type' => 'client_credentials'));
+
+        $this->bearer_access_token = $this->processTokenResponse('oauth2/token');
+
         return $this->bearer_access_token;
     }
 
@@ -470,25 +474,69 @@ class TwitterOAuth
      *  Revoke / invalidate an application-only token
      *
      * @param string $token Bearer-token
+     * @throws Exception
      * @return string Returns the same token on success
      */
-    public function invalidateBearerToken($token)
+    public function invalidateBearerToken($token = null)
     {
-        $this->generateEncodedBearerCredentials();
-        $this->bearer_access_token = null;
-        $response = $this->post("oauth2/invalidate_token", array("access_token" => rawurldecode($token)));
-
-        if (isset($response->access_token) && $response->access_token == $token) {   
-            return $response->access_token;
+        if (empty($token)) {
+            throw new \Exception('Token invalid (empty)');
         }
+
+        $this->generateEncodedBearerCredentials();
+
+        $this->post("oauth2/invalidate_token", array("access_token" => rawurldecode($token)));
+
+        $return_token = $this->processTokenResponse('oauth2/token');
+
+        return $return_token;
     }
 
+    /**
+     * Generates basic authorization credentials for token request
+     *
+     */
     protected function generateEncodedBearerCredentials()
     {
+        $this->bearer_access_token = null;
+        $this->encoded_bearer_credentials = null;
+
         $bearer_credentials = urlencode($this->config['consumer_key']) . ":" . urlencode($this->config['consumer_secret']);
 
         $this->encoded_bearer_credentials = base64_encode($bearer_credentials);
     }
 
+    /**
+     * Process oauth2 response, returns the bearer-access-token
+     *
+     * @param string $response
+     * @throws Exception\TwitterException
+     * @return mixed
+     */
+    protected function processTokenResponse($path)
+    {
+        // json-decode raw response (as object)
+        $response = json_decode($this->response);
+
+        $token = false;
+
+        switch ($path) {
+            case 'oauth2/token':
+                if (isset($response->token_type) && $response->token_type == 'bearer') {   
+                    $token = $response->access_token;
+                }
+                break;
+            
+            case 'oauth2/invalidate_token':
+                if (isset($response->access_token) && $response->access_token == $token) {   
+                    $token = $response->access_token;
+                }
+                break;            
+        }
+
+        unset($response);
+
+        return $token;
+    }
 
 }
