@@ -36,6 +36,9 @@ class TwitterOAuth
 
     protected $bearer_access_token = null;
 
+    protected $headers = null;
+
+    protected $response = null;
 
     /**
      * Prepare a new conection with Twitter API via OAuth
@@ -77,6 +80,9 @@ class TwitterOAuth
     {
         $this->call = $call;
 
+        $this->method = 'GET';
+        $this->resetParams();
+
         if ($getParams !== null && is_array($getParams)) {
             $this->getParams = $getParams;
         }
@@ -97,6 +103,7 @@ class TwitterOAuth
         $this->call = $call;
 
         $this->method = 'POST';
+        $this->resetParams();
 
         if ($postParams !== null && is_array($postParams)) {
             $this->postParams = $postParams;
@@ -107,6 +114,23 @@ class TwitterOAuth
         }
 
         return $this->sendRequest();
+    }
+
+    protected function resetParams() {
+        $this->headers = null;
+        $this->response = null;
+
+        $this->postParams = array();
+        $this->getParams = array();
+    }
+
+    /**
+     * Returns raw response body
+     *
+     * @return string Single string with encoded values
+     */
+    public function getResponse() {
+        return $this->response;
     }
 
     /**
@@ -405,10 +429,6 @@ class TwitterOAuth
         if (!in_array($response[0], array('{', '['))) {
             throw new TwitterException(str_replace(array("\n", "\r", "\t"), '', strip_tags($response)), 0);
         }
-
-        // reset some stuff
-        $this->postParams = array();
-        $this->method = 'GET';
 
         return $this->processOutput($response);
     }
