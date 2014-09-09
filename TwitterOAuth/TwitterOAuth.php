@@ -36,6 +36,9 @@ class TwitterOAuth
 
     protected $bearer_access_token = null;
 
+    protected $headers = null;
+
+    protected $response = null;
 
     /**
      * Prepare a new conection with Twitter API via OAuth
@@ -77,6 +80,9 @@ class TwitterOAuth
     {
         $this->call = $call;
 
+        $this->method = 'GET';
+        $this->resetParams();
+
         if ($getParams !== null && is_array($getParams)) {
             $this->getParams = $getParams;
         }
@@ -97,6 +103,7 @@ class TwitterOAuth
         $this->call = $call;
 
         $this->method = 'POST';
+        $this->resetParams();
 
         if ($postParams !== null && is_array($postParams)) {
             $this->postParams = $postParams;
@@ -107,6 +114,36 @@ class TwitterOAuth
         }
 
         return $this->sendRequest();
+    }
+
+    protected function resetParams() {
+        $this->headers = null;
+        $this->response = null;
+
+        $this->postParams = array();
+        $this->getParams = array();
+    }
+
+    /**
+     * Returns raw response body
+     *
+     * @return string Single string with encoded values
+     */
+    public function getResponse() {
+        return $this->response;
+    }
+
+    /**
+     * Returns response headers as array.
+     * This can be useful to avoid extra requests for rate-limit info
+     *   x-rate-limit-limit      (max request per period)
+     *   x-rate-limit-remaining  (remaining this period)
+     *   x-rate-limit-reset      (start of next period, UTC timestamp)
+     *
+     * @return array with http_code and header lines
+     */
+    public function getHeaders() {
+        return $this->headers;
     }
 
     /**
@@ -368,6 +405,34 @@ class TwitterOAuth
     }
 
     /**
+     * Process curl headers to array
+     */
+    protected function processCurlHeaders($headerContent)
+    {
+        $this->headers = array();
+
+        // Split the string on every "double" new line (multiple headers).
+        $arrRequests = explode("\r\n\r\n", $headerContent);
+
+        // Loop of response headers. The "count() -1" is to 
+        // skip an empty row for the extra line break before the body of the response.
+        for ($index = 0; $foo = count($arrRequests) -1, $index < $foo; $index++) {
+
+            foreach (explode("\r\n", $arrRequests[$index]) as $i => $line)
+            {
+                if ($i === 0)
+                    $this->headers[$index]['http_code'] = $line;
+                else
+                {
+                    list ($key, $value) = explode(': ', $line);
+                    $this->headers[$index][$key] = $value;
+                }
+            }
+        }
+    }
+
+
+    /**
      *  Send GET or POST requests to Twitter API
      *
      * @throws Exception\TwitterException
@@ -381,7 +446,7 @@ class TwitterOAuth
 
         $options = array(
             CURLOPT_URL => $url,
-            CURLOPT_HEADER => false,
+            CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => $header,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
@@ -398,19 +463,21 @@ class TwitterOAuth
 
         $response = curl_exec($c);
 
+        $header_size = curl_getinfo($c, CURLINFO_HEADER_SIZE);
+        $headers = substr($response, 0, $header_size);
+        $this->processCurlHeaders($headers);
+
+        $this->response = substr($response, $header_size);
+
         curl_close($c);
 
-        unset($options, $c);
+        unset($response, $options, $c);
 
-        if (!in_array($response[0], array('{', '['))) {
-            throw new TwitterException(str_replace(array("\n", "\r", "\t"), '', strip_tags($response)), 0);
+        if (!in_array($this->response[0], array('{', '['))) {
+            throw new TwitterException(str_replace(array("\n", "\r", "\t"), '', $url.' : '.strip_tags($this->response)), 0);
         }
 
-        // reset some stuff
-        $this->postParams = array();
-        $this->method = 'GET';
-
-        return $this->processOutput($response);
+        return $this->processOutput($this->response);
     }
 
 
@@ -421,12 +488,17 @@ class TwitterOAuth
      * instead of OAuth consumer keys. 
      * https://dev.twitter.com/docs/auth/application-only-auth
      *
+     * @throws Exception
      * @param string $token bearer-token
      */
-    public function setBearerToken($token)
+    public function setBearerToken($token = null)
     {
-        $this->bearer_access_token = $token;
+        if (empty($token)) {
+            throw new \Exception('Token invalid (empty)');
+        }
+
         $this->generateEncodedBearerCredentials();
+        $this->bearer_access_token = $token;
     }
 
     /**
@@ -435,14 +507,13 @@ class TwitterOAuth
      * @return string Returns access-token on success
      */
     public function getBearerToken()
-    {
+    {        
         $this->generateEncodedBearerCredentials();
-        $this->bearer_access_token = null;
-        $response = $this->post("oauth2/token", array("grant_type" => "client_credentials"));
 
-        if (isset($response->token_type) && $response->token_type == "bearer") {   
-            $this->bearer_access_token = $response->access_token;
-        }
+        $this->post('oauth2/token', array('grant_type' => 'client_credentials'));
+
+        $this->bearer_access_token = $this->processTokenResponse('oauth2/token');
+
         return $this->bearer_access_token;
     }
 
@@ -450,25 +521,69 @@ class TwitterOAuth
      *  Revoke / invalidate an application-only token
      *
      * @param string $token Bearer-token
+     * @throws Exception
      * @return string Returns the same token on success
      */
-    public function invalidateBearerToken($token)
+    public function invalidateBearerToken($token = null)
     {
-        $this->generateEncodedBearerCredentials();
-        $this->bearer_access_token = null;
-        $response = $this->post("oauth2/invalidate_token", array("access_token" => rawurldecode($token)));
-
-        if (isset($response->access_token) && $response->access_token == $token) {   
-            return $response->access_token;
+        if (empty($token)) {
+            throw new \Exception('Token invalid (empty)');
         }
+
+        $this->generateEncodedBearerCredentials();
+
+        $this->post("oauth2/invalidate_token", array("access_token" => rawurldecode($token)));
+
+        $return_token = $this->processTokenResponse('oauth2/token');
+
+        return $return_token;
     }
 
+    /**
+     * Generates basic authorization credentials for token request
+     *
+     */
     protected function generateEncodedBearerCredentials()
     {
+        $this->bearer_access_token = null;
+        $this->encoded_bearer_credentials = null;
+
         $bearer_credentials = urlencode($this->config['consumer_key']) . ":" . urlencode($this->config['consumer_secret']);
 
         $this->encoded_bearer_credentials = base64_encode($bearer_credentials);
     }
 
+    /**
+     * Process oauth2 response, returns the bearer-access-token
+     *
+     * @param string $response
+     * @throws Exception\TwitterException
+     * @return mixed
+     */
+    protected function processTokenResponse($path)
+    {
+        // json-decode raw response (as object)
+        $response = json_decode($this->response);
+
+        $token = false;
+
+        switch ($path) {
+            case 'oauth2/token':
+                if (isset($response->token_type) && $response->token_type == 'bearer') {   
+                    $token = $response->access_token;
+                }
+                break;
+            
+            case 'oauth2/invalidate_token':
+                if (isset($response->access_token) && $response->access_token == $token) {   
+                    $token = $response->access_token;
+                }
+                break;            
+        }
+
+        unset($response);
+
+        return $token;
+    }
 
 }
