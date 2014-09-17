@@ -463,6 +463,10 @@ class TwitterOAuth
 
         $response = curl_exec($c);
 
+        if ($n = curl_errno($c)) { 
+            throw new \Exception("cURL error ($n) : ".curl_error($c));
+        }
+
         $header_size = curl_getinfo($c, CURLINFO_HEADER_SIZE);
         $headers = substr($response, 0, $header_size);
         $this->processCurlHeaders($headers);
@@ -474,7 +478,7 @@ class TwitterOAuth
         unset($response, $options, $c);
 
         if (!in_array($this->response[0], array('{', '['))) {
-            throw new TwitterException(str_replace(array("\n", "\r", "\t"), '', $url.' : '.strip_tags($this->response)), 0);
+            throw new TwitterException("($url) ".str_replace(array("\n", "\r", "\t"), '', strip_tags($this->response)), 0);
         }
 
         return $this->processOutput($this->response);
@@ -534,7 +538,7 @@ class TwitterOAuth
 
         $this->post("oauth2/invalidate_token", array("access_token" => rawurldecode($token)));
 
-        $return_token = $this->processTokenResponse('oauth2/token');
+        $return_token = $this->processTokenResponse('oauth2/invalidate_token');
 
         return $return_token;
     }
@@ -575,7 +579,7 @@ class TwitterOAuth
                 break;
             
             case 'oauth2/invalidate_token':
-                if (isset($response->access_token) && $response->access_token == $token) {   
+                if (isset($response->access_token)) {   
                     $token = $response->access_token;
                 }
                 break;            
