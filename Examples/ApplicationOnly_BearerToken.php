@@ -2,7 +2,7 @@
 
 require __DIR__ . '/../../../../vendor/autoload.php';
 
-use TwitterOAuth\ApplicationOnly;
+use TwitterOAuth\Auth\ApplicationOnlyAuth;
 
 /**
  * Serializer Namespace
@@ -31,7 +31,7 @@ $credentials = array(
  */
 $serializer = new JsonSerializer();
 
-$auth = new ApplicationOnly($credentials, $serializer);
+$auth = new ApplicationOnlyAuth($credentials, $serializer);
 
 
 /**

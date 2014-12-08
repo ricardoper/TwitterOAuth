@@ -2,7 +2,7 @@
 
 require __DIR__ . '/../../../../vendor/autoload.php';
 
-use TwitterOAuth\SingleUser;
+use TwitterOAuth\Auth\SingleUserAuth;
 
 /**
  * Serializer Namespace
@@ -33,7 +33,7 @@ $credentials = array(
  * For different output formats you can set one of available serializers
  * (Array, Json, Object, Text or a custom one)
  */
-$auth = new SingleUser($credentials, new JsonSerializer());
+$auth = new SingleUserAuth($credentials, new JsonSerializer());
 
 
 /**
