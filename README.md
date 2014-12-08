@@ -25,7 +25,7 @@ The recommended way to install TwitterOAuth is through [Composer](http://getcomp
 ```json
 {
     "require": {
-        "ricardoper/twitteroauth": "2.*"
+        "ricardoper/twitteroauth": "2.*@dev"
     }
 }
 ```
