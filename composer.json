@@ -14,9 +14,14 @@
     ],
     "require": {
         "php": ">=5.3",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "ext-json": "*",
+        "lib-curl": "*",
+        "lib-openssl": "*"
     },
     "autoload": {
-        "psr-0": { "TwitterOAuth\\": "" }
+        "psr-4": {
+            "TwitterOAuth\\": "src/"
+        }
     }
 }
