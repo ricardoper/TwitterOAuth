@@ -7,7 +7,7 @@ use TwitterOAuth\Auth\ApplicationOnlyAuth;
 /**
  * Serializer Namespace
  */
-use TwitterOAuth\Serializer\JsonSerializer;
+use TwitterOAuth\Serializer\ArraySerializer;
 
 
 date_default_timezone_set('UTC');
@@ -29,7 +29,7 @@ $credentials = array(
  * For different output formats you can set one of available serializers
  * (Array, Json, Object, Text or a custom one)
  */
-$auth = new ApplicationOnlyAuth($credentials, new JsonSerializer());
+$auth = new ApplicationOnlyAuth($credentials, new ArraySerializer());
 
 
 /**
