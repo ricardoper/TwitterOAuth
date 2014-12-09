@@ -34,6 +34,34 @@ The recommended way to install TwitterOAuth is through [Composer](http://getcomp
 
 
 
+## Benchmarks ##
+
+Very simple benchmarks from "Examples" source code.
+
+**Notes:**
+- Connection time excluded
+- Twitter API response time excluded
+- Browser render time included
+- Nginx v1.6.2
+- PHP 5.5.9
+- Xdebug v2.2.3 Loaded
+- Zend OPcache Loaded
+
+#### Memory Usage ####
+Less than 524Kb except for image uploading. In this case memory depends on the image size.
+
+#### Load Times ####
+
+![ApplicationOnly_Minimal](https://raw.githubusercontent.com/ricardoper/TwitterOAuth/v2/Docs/Benchs/Time_ApplicationOnly_Minimal.png)
+
+![ApplicationOnly_BearerToken](https://raw.githubusercontent.com/ricardoper/TwitterOAuth/v2/Docs/Benchs/Time_ApplicationOnly_BearerToken.png)
+
+![SingleUser](https://raw.githubusercontent.com/ricardoper/TwitterOAuth/v2/Docs/Benchs/Time_SingleUser.png)
+
+![SingleUser_UploadingMedia](https://raw.githubusercontent.com/ricardoper/TwitterOAuth/v2/Docs/Benchs/Time_SingleUser_UploadingMedia.png)
+
+
+
 ## License ##
 
 Released under the MIT License.
