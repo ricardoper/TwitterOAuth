@@ -70,11 +70,11 @@ class SingleUserAuth extends AuthAbstract
      */
     public function post($call, array $postParams = null, array $getParams = null)
     {
+        $this->resetCallState();
+
         $this->call = $call;
+
         $this->method = 'POST';
-        $this->getParams = array();
-        $this->postParams = array();
-        $this->withMedia = null;
 
         if ($postParams !== null && is_array($postParams)) {
             $this->postParams = $postParams;
@@ -106,10 +106,12 @@ class SingleUserAuth extends AuthAbstract
      */
     public function postMedia($call, $filename)
     {
+        $this->resetCallState();
+
         $this->call = $call;
+
         $this->method = 'POST';
-        $this->getParams = array();
-        $this->postParams = array();
+
         $this->withMedia = true;
 
         $mimeBoundary = sha1($call . microtime());

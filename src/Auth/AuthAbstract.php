@@ -126,11 +126,11 @@ abstract class AuthAbstract
      */
     public function get($call, array $getParams = null)
     {
+        $this->resetCallState();
+
         $this->call = $call;
+
         $this->method = 'GET';
-        $this->getParams = array();
-        $this->postParams = array();
-        $this->withMedia = null;
 
         if ($getParams !== null && is_array($getParams)) {
             $this->getParams = $getParams;
@@ -323,5 +323,18 @@ abstract class AuthAbstract
         unset($filename);
 
         return $binary;
+    }
+
+    /**
+     * Reset Call State
+     */
+    protected function resetCallState()
+    {
+        $this->call = null;
+        $this->method = null;
+        $this->withMedia = null;
+        $this->getParams = array();
+        $this->postParams = array();
+        $this->headers = null;
     }
 }
