@@ -33,6 +33,8 @@ The recommended way to install TwitterOAuth is through [Composer](http://getcomp
 }
 ```
 
+**NOTE:** If you prefer v1 (One Single File), you can get it in [v1 branch](https://github.com/ricardoper/TwitterOAuth/tree/v1).
+
 ## Example ##
 Please, see the examples source code from "Examples" folder.
 
