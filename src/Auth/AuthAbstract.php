@@ -18,7 +18,7 @@ use TwitterOAuth\Exception\FileNotReadableException;
 use TwitterOAuth\Exception\UnsupportedMimeException;
 use TwitterOAuth\Exception\MissingCredentialsException;
 
-abstract class Auth
+abstract class AuthAbstract
 {
     const EOL = "\r\n";
 
@@ -126,9 +126,11 @@ abstract class Auth
      */
     public function get($call, array $getParams = null)
     {
-        $this->method = 'GET';
-
         $this->call = $call;
+        $this->method = 'GET';
+        $this->getParams = array();
+        $this->postParams = array();
+        $this->withMedia = null;
 
         if ($getParams !== null && is_array($getParams)) {
             $this->getParams = $getParams;
@@ -180,20 +182,10 @@ abstract class Auth
 
         $jsonExt = '.json';
 
-        $callExp = explode('/', $this->call);
-
 
         if (isset($this->withMedia) && $this->withMedia === true) {
             $domain = $this->urls['upload'];
         }
-
-        if (!empty($callExp[0]) && $callExp[0] === 'oauth') {
-            $apiVersion = '';
-
-            $jsonExt = '';
-        }
-
-        unset($callExp);
 
         return $domain . $apiVersion . $this->call . $jsonExt;
     }

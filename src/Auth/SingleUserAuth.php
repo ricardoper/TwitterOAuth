@@ -10,7 +10,7 @@
 
 namespace TwitterOAuth\Auth;
 
-class SingleUserAuth extends Auth
+class SingleUserAuth extends AuthAbstract
 {
     /**
      * Expects the follow parameters:
@@ -70,9 +70,11 @@ class SingleUserAuth extends Auth
      */
     public function post($call, array $postParams = null, array $getParams = null)
     {
-        $this->method = 'POST';
-
         $this->call = $call;
+        $this->method = 'POST';
+        $this->getParams = array();
+        $this->postParams = array();
+        $this->withMedia = null;
 
         if ($postParams !== null && is_array($postParams)) {
             $this->postParams = $postParams;
@@ -104,10 +106,10 @@ class SingleUserAuth extends Auth
      */
     public function postMedia($call, $filename)
     {
-        $this->method = 'POST';
-
         $this->call = $call;
-
+        $this->method = 'POST';
+        $this->getParams = array();
+        $this->postParams = array();
         $this->withMedia = true;
 
         $mimeBoundary = sha1($call . microtime());

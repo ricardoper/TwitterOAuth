@@ -10,7 +10,7 @@
 
 namespace TwitterOAuth\Auth;
 
-class ApplicationOnlyAuth extends Auth
+class ApplicationOnlyAuth extends AuthAbstract
 {
     /**
      * Expects the follow parameters:
