@@ -38,8 +38,8 @@ abstract class AuthAbstract
     /**
      * Authentication Base
      *
-     * @param array $credentials  Credentials Array
-     * @param SerializerInterface $serializer  Output Serializer
+     * @param array $credentials Credentials Array
+     * @param SerializerInterface $serializer Output Serializer
      * @throws MissingCredentialsException
      */
     public function __construct(array $credentials, SerializerInterface $serializer)
