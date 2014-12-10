@@ -11,7 +11,7 @@ PHP library to communicate with Twitter OAuth API version 1.1.
 
 
 ## OAuth Methods Supported ##
-- [Single-User OAuth](https://dev.twitter.com/oauth/overview/single-user "Single-user OAuth with Examples")
+- [Single-User OAuth](https://dev.twitter.com/oauth/overview/single-user "Single-user OAuth with Examples") (media/upload supported - account/update_profile_background_image not supported)
 - [Application-Only Authentication](https://dev.twitter.com/oauth/application-only "Application-only authentication Overview")
 
 
