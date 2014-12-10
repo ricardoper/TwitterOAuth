@@ -2,7 +2,7 @@
 
 PHP library to communicate with Twitter OAuth API version 1.1.
 
-[![Latest Stable Version](https://poser.pugx.org/ricardoper/twitteroauth/v/stable.svg)](https://packagist.org/packages/ricardoper/twitteroauth) [![Total Downloads](https://poser.pugx.org/ricardoper/twitteroauth/downloads.svg)](https://packagist.org/packages/ricardoper/twitteroauth) [![Latest Unstable Version](https://poser.pugx.org/ricardoper/twitteroauth/v/unstable.svg)](https://packagist.org/packages/ricardoper/twitteroauth) [![License](https://poser.pugx.org/ricardoper/twitteroauth/license.svg)](https://packagist.org/packages/ricardoper/twitteroauth)
+[![Latest Stable Version](https://poser.pugx.org/ricardoper/twitteroauth/v/stable.svg)](https://packagist.org/packages/ricardoper/twitteroauth) [![Total Downloads](https://poser.pugx.org/ricardoper/twitteroauth/downloads.svg)](https://packagist.org/packages/ricardoper/twitteroauth) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/91e26ff3-3609-4cde-96f3-d97d4d10c8fc/mini.png)](https://insight.sensiolabs.com/projects/91e26ff3-3609-4cde-96f3-d97d4d10c8fc) ![License](https://poser.pugx.org/ricardoper/twitteroauth/license.svg)
 
 - Namespaced
 - PHP 5.3
