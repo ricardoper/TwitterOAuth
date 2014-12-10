@@ -261,7 +261,7 @@ abstract class AuthAbstract
 
         $data = '--' . $mimeBoundary . static::EOL;
         $data .= 'Content-Disposition: form-data; name="media"; filename="' . $details['basename'] . '"' . static::EOL;
-        $data .= 'Content-Type: ' . $type . static::EOL . static::EOL;
+        $data .= 'Content-Type: application/octet-stream' . static::EOL . static::EOL;
         $data .= $binary . static::EOL;
         $data .= '--' . $mimeBoundary . '--' . static::EOL . static::EOL;
 

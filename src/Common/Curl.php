@@ -35,7 +35,6 @@ class Curl
             'headers' => array(),
             'cookies' => false,
             'gzip' => true,
-            'ua' => 0,
         );
 
         $params = array_merge($default, $params);
@@ -64,7 +63,7 @@ class Curl
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_CAINFO => dirname(__DIR__) . '/Certificates/rootca.pem',
-            CURLOPT_USERAGENT => $this->getUserAgent($params['ua']),
+            CURLOPT_USERAGENT => 'TwitterOAuth for v1.1 API (https://github.com/ricardoper/TwitterOAuth)',
 
             // FOR DEBUG ONLY - PROXY SETTINGS //
             //CURLOPT_PROXY => '127.0.0.1',
@@ -146,40 +145,6 @@ class Curl
         unset($params, $key, $value);
 
         return trim($r, '&');
-    }
-
-    /**
-     * Get User Agent ID
-     *
-     * @param null $key
-     *     If null return random UA
-     *     If integer then return UA from array index
-     * @return string  User Agent ID
-     */
-    protected function getUserAgent($key = null)
-    {
-        $ua = array(
-            // Chrome //
-            'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36',
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1664.3 Safari/537.36',
-            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.102 Safari/537.36',
-            // Firefox //
-            'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:26.0) Gecko/20100101 Firefox/26.0',
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:26.0) Gecko/20100101 Firefox/26.0',
-            'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0) Gecko/20100101 Firefox/26.0',
-            // IE //
-            'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
-            'Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0))',
-            'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; GTB7.4; InfoPath.2; SV1; .NET CLR 3.3.69573; WOW64)',
-        );
-
-        if ($key !== null) {
-            return $ua[$key];
-        }
-
-        unset($key);
-
-        return $ua[(int)mt_rand(0, count($ua) - 1)];
     }
 
     /**
