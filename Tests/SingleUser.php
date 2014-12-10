@@ -38,7 +38,7 @@ header('Content-Type: text/html; charset=utf-8');
 
 <?php
 
-$credentials1 = array(
+$credentials = array(
     'consumer_key' => 'xvz1evFS4wEEPTGEFPHBog',
     'consumer_secret' => 'L8qq9PZyRg6ieKGEKhZolGC0vJWLw8iEJ88DRdyOg',
     'oauth_token' => 'e98c603b55646a6d22249d9b0096e9af29bafcc2',
