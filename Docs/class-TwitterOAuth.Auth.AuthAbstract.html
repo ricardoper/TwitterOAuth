@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class TwitterOAuth\Auth\AuthAbstract | TwitterOAuth (for v1.1 API)</title>
+
+	<link rel="stylesheet" href="resources/style.css?331665766">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-TwitterOAuth.html">
+						TwitterOAuth<span></span>
+					</a>
+
+						<ul>
+				<li class="active">
+					<a href="namespace-TwitterOAuth.Auth.html">
+						Auth					</a>
+
+						</li>
+				<li>
+					<a href="namespace-TwitterOAuth.Common.html">
+						Common					</a>
+
+						</li>
+				<li>
+					<a href="namespace-TwitterOAuth.Exception.html">
+						Exception					</a>
+
+						</li>
+				<li>
+					<a href="namespace-TwitterOAuth.Serializer.html">
+						Serializer					</a>
+
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-TwitterOAuth.Auth.ApplicationOnlyAuth.html">ApplicationOnlyAuth</a></li>
+				<li class="active"><a href="class-TwitterOAuth.Auth.AuthAbstract.html">AuthAbstract</a></li>
+				<li><a href="class-TwitterOAuth.Auth.SingleUserAuth.html">SingleUserAuth</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-TwitterOAuth.Auth.html" title="Summary of TwitterOAuth\Auth"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class AuthAbstract</h1>
+
+
+	<div class="description">
+	
+
+	</div>
+
+
+
+	<div>
+		<h4>Direct known subclasses</h4>
+			<a href="class-TwitterOAuth.Auth.ApplicationOnlyAuth.html">TwitterOAuth\Auth\ApplicationOnlyAuth</a>, 
+			<a href="class-TwitterOAuth.Auth.SingleUserAuth.html">TwitterOAuth\Auth\SingleUserAuth</a>
+	</div>
+
+
+
+
+
+
+	<div class="info">
+		<b>Abstract</b><br>
+		
+		<b>Namespace:</b> TwitterOAuth\Auth<br>
+		
+
+		<b>Located at</b> <a href="source-class-TwitterOAuth.Auth.AuthAbstract.html#21-340" title="Go to source code">Auth/AuthAbstract.php</a><br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-TwitterOAuth.Auth.AuthAbstract.html#38-56" title="Go to source code">__construct</a>( <span>array <var>$credentials</var></span>, <span><code><a href="class-TwitterOAuth.Serializer.SerializerInterface.html">TwitterOAuth\Serializer\SerializerInterface</a></code> <var>$serializer</var></span> )</code>
+
+		<div class="description short">
+			<p>Authentication Base</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Authentication Base</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$credentials</var></dt>
+					<dd>Credentials Array
+</dd>
+					<dt><var>$serializer</var></dt>
+					<dd>Output Serializer
+</dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-TwitterOAuth.Exception.MissingCredentialsException.html">TwitterOAuth\Exception\MissingCredentialsException</a></code>
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getConsumerKey" id="_getConsumerKey">
+
+		<td class="attributes"><code>
+			 public 
+
+			null|string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getConsumerKey">#</a>
+		<code><a href="source-class-TwitterOAuth.Auth.AuthAbstract.html#58-70" title="Go to source code">getConsumerKey</a>( )</code>
+
+		<div class="description short">
+			<p>Gets the Twitter API key</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Gets the Twitter API key</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>null|string</code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getConsumerSecret" id="_getConsumerSecret">
+
+		<td class="attributes"><code>
+			 public 
+
+			null|string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getConsumerSecret">#</a>
+		<code><a href="source-class-TwitterOAuth.Auth.AuthAbstract.html#72-84" title="Go to source code">getConsumerSecret</a>( )</code>
+
+		<div class="description short">
+			<p>Gets the Twitter API secret</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Gets the Twitter API secret</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>null|string</code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getSerializer" id="_getSerializer">
+
+		<td class="attributes"><code>
+			 public 
+
+			null|<code><a href="class-TwitterOAuth.Serializer.SerializerInterface.html">TwitterOAuth\Serializer\SerializerInterface</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getSerializer">#</a>
+		<code><a href="source-class-TwitterOAuth.Auth.AuthAbstract.html#86-98" title="Go to source code">getSerializer</a>( )</code>
+
+		<div class="description short">
+			<p>Gets Serializer</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Gets Serializer</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>null|<code><a href="class-TwitterOAuth.Serializer.SerializerInterface.html">TwitterOAuth\Serializer\SerializerInterface</a></code></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getHeaders" id="_getHeaders">
+
+		<td class="attributes"><code>
+			 public 
+
+			array|string|false
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getHeaders">#</a>
+		<code><a href="source-class-TwitterOAuth.Auth.AuthAbstract.html#100-117" title="Go to source code">getHeaders</a>( <span>null <var>$key</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Get response headers</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get response headers</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$key</var></dt>
+					<dd>
+</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>array|string|false</code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="get" id="_get">
+
+		<td class="attributes"><code>
+			 public 
+
+			mixed
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_get">#</a>
+		<code><a href="source-class-TwitterOAuth.Auth.AuthAbstract.html#119-148" title="Go to source code">get</a>( <span>string <var>$call</var></span>, <span>array <var>$getParams</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Send a GET call to Twitter API via OAuth</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Send a GET call to Twitter API via OAuth</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$call</var></dt>
+					<dd>Twitter resource string
+</dd>
+					<dt><var>$getParams</var></dt>
+					<dd>GET parameters to send
+</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>mixed</code><br>Output with selected format
+
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-TwitterOAuth.Exception.TwitterException.html">TwitterOAuth\Exception\TwitterException</a></code>
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+	<table class="summary constants" id="constants">
+	<caption>Constants summary</caption>
+	<tr data-order="EOL" id="EOL">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name">
+			<code>
+				<a href="source-class-TwitterOAuth.Auth.AuthAbstract.html#23" title="Go to source code"><b>EOL</b></a>
+			</code>
+
+			<div class="description short">
+				
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#EOL" class="anchor">#</a>
+				<code><span class="php-quote">&quot;\r\n&quot;</span></code>
+			</div>
+		</td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		TwitterOAuth (for v1.1 API) API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js?721046668"></script>
+<script src="elementlist.js?4201046638"></script>
+</body>
+</html>

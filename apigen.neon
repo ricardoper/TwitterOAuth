@@ -1,0 +1,14 @@
+source:
+	- src
+	
+charset:
+	- UTF-8
+	
+accessLevels:
+	- public
+	
+title: "TwitterOAuth (for v1.1 API)"
+php: false
+todo: false
+download: false
+destination: Docs
