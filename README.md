@@ -82,7 +82,7 @@ Command: siege -c20 -b -r1000 "URL"
 | v2 ApplicationOnly (Without Composer) | 15.78 | 1267.43 |
 | v2 SingleUser (Without Composer) | 15.60 | 1282.05 |
 
-| Test Name | Single Req. Without Conn. Time | Single Req. With Conn. Time |
+| Test Name (Single Run) | Without Conn. Time | With Conn. Time |
 | --- | :----: | :---: |
 | v1 ApplicationOnly | 0.003817 | 2.056922 |
 | v1 SingleUser | 0.003674 | 1.115811 |
