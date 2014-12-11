@@ -7,16 +7,16 @@ PHP library to communicate with Twitter OAuth API version 1.1.
 - PHP 5.3
 - [PSR-2](http://www.php-fig.org/psr/psr-2/ "PHP Framework Interop Group")
 - [PSR-4](http://www.php-fig.org/psr/psr-4/ "PHP Framework Interop Group")
-- OOP
+- OOP<br/>
 <br/>
-<br/>
+
 ## OAuth Methods Supported ##
 - [Single-User OAuth](https://dev.twitter.com/oauth/overview/single-user "Single-user OAuth with Examples")
 - [Application-Only Authentication](https://dev.twitter.com/oauth/application-only "Application-only authentication Overview")
 
-**NOTE:** Call media/upload supported, call account/update_profile_background_image not supported.
+**NOTE:** Call media/upload supported, call account/update_profile_background_image not supported.<br/>
 <br/>
-<br/>
+
 ## Requirements ##
 - PHP Version >= 5.3
 - PHP cURL extension
@@ -24,9 +24,9 @@ PHP library to communicate with Twitter OAuth API version 1.1.
 - PHP OpenSSL extension
 - Lib cURL
 
-**NOTE:** No external dependencies (Guzzle, Symfony Components. etc...)
+**NOTE:** No external dependencies (Guzzle, Symfony Components. etc...)<br/>
 <br/>
-<br/>
+
 ## Installation ##
 The recommended way to install TwitterOAuth is through [Composer](http://getcomposer.org/):
 
@@ -38,13 +38,13 @@ The recommended way to install TwitterOAuth is through [Composer](http://getcomp
 }
 ```
 
-**NOTE:** If you prefer v1 (One Single File), you can get it in [v1 branch](https://github.com/ricardoper/TwitterOAuth/tree/v1).
+**NOTE:** If you prefer v1 (One Single File), you can get it in [v1 branch](https://github.com/ricardoper/TwitterOAuth/tree/v1).<br/>
 <br/>
-<br/>
+
 ## Examples ##
-Please, see the examples source code from "Examples" folder.
+Please, see the examples source code from "Examples" folder.<br/>
 <br/>
-<br/>
+
 ## Benchmarks ##
 Very simple benchmarks from "Examples" source code.
 
@@ -69,8 +69,7 @@ SIEGE 3.0.5
 20 concurrent connections<br/>
 1000 requests per thread<br/>
 No delays between requests<br/>
-Command: siege -c20 -b -r1000 "URL"
-<br/>
+Command: siege -c20 -b -r1000 "URL"<br/>
 <br/>
 
 | Test Name | Execution Time | Requests per Second |
@@ -92,6 +91,7 @@ Command: siege -c20 -b -r1000 "URL"
 | v2 SingleUser (Without Composer) | 0.004403 | 0.838964 |
 <br/>
 <br/>
+
 **v1 App Only**<br/>
 Transactions: 20000 hits<br/>
 Availability: 100.00 %<br/>
@@ -174,8 +174,8 @@ Concurrency: 19.90<br/>
 Successful transactions: 20000<br/>
 Failed transactions: 0<br/>
 Longest transaction: 0.06<br/>
-Shortest transaction: 0.00
+Shortest transaction: 0.00<br/>
 <br/>
-<br/>
+
 ## License ##
 Released under the MIT License.
