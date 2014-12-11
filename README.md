@@ -52,7 +52,7 @@ Very simple benchmarks from "Examples" source code.
 **Less than 524Kb** except for image uploading. In this case memory depends on the image size.
 
 #### Stress Bench ####
-**Stress bench done without connection request time.** Single run Bench done with and without connection request time. Connection request time may vary depending on the internet connection.
+**Stress bench done without connection request time.** Single run bench done with and without connection request time. Connection request time may vary depending on the internet connection.
 
 **Machine:**<br/>
 Intel Core 2 Quad Q6600 2.40GHz<br/>
