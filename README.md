@@ -52,7 +52,7 @@ Very simple benchmarks from "Examples" source code.
 **Less than 524Kb** except for image uploading. In this case memory depends on the image size.
 
 #### Stress Bench ####
-Bench done **without connection times**. Connection times may vary depending on the internet connection.
+**Stress bench done without connection request time.** Single run Bench done with and without connection request time. Connection request time may vary depending on the internet connection.
 
 **Machine:**<br/>
 Intel Core 2 Quad Q6600 2.40GHz<br/>
@@ -82,7 +82,7 @@ Command: siege -c20 -b -r1000 "URL"<br/>
 | v2 SingleUser (Without Composer) | 15.60 | 1282.05 |
 <br/>
 
-| Test Name (Single Run) | Without Conn. Time | With Conn. Time |
+| Test Name (Single Run) | Without Req. Time | With Req. Time |
 | --- | :----: | :---: |
 | v1 ApplicationOnly | 0.003817 | 2.056922 |
 | v1 SingleUser | 0.003674 | 1.115811 |
