@@ -81,7 +81,7 @@ Command: siege -c20 -b -r1000 "URL"
 | v2 SingleUser (Without Composer) | 15.60 | 1282.05 |
 
 #### In Detail: ####
-v1 ApplicationOnly |  
+v1 ApplicationOnly | . 
 --- | ---
 Transactions |  20000 hits
 Availability |  100.00 %
@@ -96,7 +96,7 @@ Failed transactions |  0
 Longest transaction |  0.03
 Shortest transaction |  0.00
 
-v1 SingleUser |  
+v1 SingleUser | . 
 --- | ---
 Transactions |  20000 hits
 Availability |  100.00 %
@@ -112,7 +112,7 @@ Longest transaction |  0.05
 Shortest transaction |  0.00
 
 
-v2 ApplicationOnly |  
+v2 ApplicationOnly | . 
 --- | ---
 Transactions |  20000 hits
 Availability |  100.00 %
@@ -127,7 +127,7 @@ Failed transactions |  0
 Longest transaction |  0.06
 Shortest transaction |  0.00
 
-v2 SingleUser |  
+v2 SingleUser | . 
 --- | ---
 Transactions |  20000 hits
 Availability |  100.00 %
