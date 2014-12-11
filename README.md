@@ -81,7 +81,8 @@ Command: siege -c20 -b -r1000 "URL"
 | v2 SingleUser | 15.61 | 1281.23 |
 | v2 ApplicationOnly (Without Composer) | 15.78 | 1267.43 |
 | v2 SingleUser (Without Composer) | 15.60 | 1282.05 |
-
+<br/>
+<br/>
 **v1 App Only**<br/>
 Transactions: 20000 hits<br/>
 Availability: 100.00 %<br/>
