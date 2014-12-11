@@ -81,89 +81,96 @@ Command: siege -c20 -b -r1000 "URL"
 | v2 SingleUser (Without Composer) | 15.60 | 1282.05 |
 
 #### In Detail: ####
-**v1 App Only**
-Transactions: 20000 hits
-Availability: 100.00 %
-Elapsed time: 11.44 secs
-Data transferred: 0.46 MB
-Response time:  0.01 secs
-Transaction rate: 1748.25 trans/sec
-Throughput:  0.04 MB/sec
-Concurrency: 19.91
-Successful transactions: 20000
-Failed transactions: 0
-Longest transaction: 0.03
-Shortest transaction: 0.00
+v1 ApplicationOnly |  
+--- | ---
+Transactions |  20000 hits
+Availability |  100.00 %
+Elapsed time |  11.44 secs
+Data transferred |  0.46 MB
+Response time |   0.01 secs
+Transaction rate |  1748.25 trans/sec
+Throughput |   0.04 MB/sec
+Concurrency |  19.91
+Successful transactions |  20000
+Failed transactions |  0
+Longest transaction |  0.03
+Shortest transaction |  0.00
 
-**v1 Single User**
-Transactions: 20000 hits
-Availability: 100.00 %
-Elapsed time: 10.05 secs
-Data transferred: 0.46 MB
-Response time:  0.01 secs
-Transaction rate: 1990.05 trans/sec
-Throughput:  0.05 MB/sec
-Concurrency: 19.86
-Successful transactions: 20000
-Failed transactions: 0
-Longest transaction: 0.05
-Shortest transaction: 0.00
+v1 SingleUser |  
+--- | ---
+Transactions |  20000 hits
+Availability |  100.00 %
+Elapsed time |  10.05 secs
+Data transferred |  0.46 MB
+Response time |   0.01 secs
+Transaction rate |  1990.05 trans/sec
+Throughput |   0.05 MB/sec
+Concurrency |  19.86
+Successful transactions |  20000
+Failed transactions |  0
+Longest transaction |  0.05
+Shortest transaction |  0.00
 
-**v2 App only**
-Transactions: 20000 hits
-Availability: 100.00 %
-Elapsed time: 16.62 secs
-Data transferred: 0.46 MB
-Response time:  0.02 secs
-Transaction rate: 1203.37 trans/sec
-Throughput:  0.03 MB/sec
-Concurrency: 19.91
-Successful transactions: 20000
-Failed transactions: 0
-Longest transaction: 0.06
-Shortest transaction: 0.00
 
-**v2 Single User**
-Transactions: 20000 hits
-Availability: 100.00 %
-Elapsed time: 15.61 secs
-Data transferred: 0.46 MB
-Response time:  0.02 secs
-Transaction rate: 1281.23 trans/sec
-Throughput:  0.03 MB/sec
-Concurrency: 19.91
-Successful transactions: 20000
-Failed transactions: 0
-Longest transaction: 0.04
-Shortest transaction: 0.01
+v2 ApplicationOnly |  
+--- | ---
+Transactions |  20000 hits
+Availability |  100.00 %
+Elapsed time |  16.62 secs
+Data transferred |  0.46 MB
+Response time |   0.02 secs
+Transaction rate |  1203.37 trans/sec
+Throughput |   0.03 MB/sec
+Concurrency |  19.91
+Successful transactions |  20000
+Failed transactions |  0
+Longest transaction |  0.06
+Shortest transaction |  0.00
 
-**v2 App Only (Without Composer)**
-Transactions: 20000 hits
-Availability: 100.00 %
-Elapsed time: 15.78 secs
-Data transferred: 0.46 MB
-Response time:  0.02 secs
-Transaction rate: 1267.43 trans/sec
-Throughput:  0.03 MB/sec
-Concurrency: 19.91
-Successful transactions: 20000
-Failed transactions: 0
-Longest transaction: 0.04
-Shortest transaction: 0.00
+v2 SingleUser |  
+--- | ---
+Transactions |  20000 hits
+Availability |  100.00 %
+Elapsed time |  15.61 secs
+Data transferred |  0.46 MB
+Response time |   0.02 secs
+Transaction rate |  1281.23 trans/sec
+Throughput |   0.03 MB/sec
+Concurrency |  19.91
+Successful transactions |  20000
+Failed transactions |  0
+Longest transaction |  0.04
+Shortest transaction |  0.01
 
-**v2 Single User (Without Composer)**
-Transactions: 20000 hits
-Availability: 100.00 %
-Elapsed time: 15.60 secs
-Data transferred: 0.46 MB
-Response time:  0.02 secs
-Transaction rate: 1282.05 trans/sec
-Throughput:  0.03 MB/sec
-Concurrency: 19.90
-Successful transactions: 20000
-Failed transactions: 0
-Longest transaction: 0.06
-Shortest transaction: 0.00
+v2 ApplicationOnly | (Without Composer)
+--- | ---
+Transactions |  20000 hits
+Availability |  100.00 %
+Elapsed time |  15.78 secs
+Data transferred |  0.46 MB
+Response time |   0.02 secs
+Transaction rate |  1267.43 trans/sec
+Throughput |   0.03 MB/sec
+Concurrency |  19.91
+Successful transactions |  20000
+Failed transactions |  0
+Longest transaction |  0.04
+Shortest transaction |  0.00
+
+v2 SingleUser | (Without Composer)
+--- | ---
+Transactions |  20000 hits
+Availability |  100.00 %
+Elapsed time |  15.60 secs
+Data transferred |  0.46 MB
+Response time |   0.02 secs
+Transaction rate |  1282.05 trans/sec
+Throughput |   0.03 MB/sec
+Concurrency |  19.90
+Successful transactions |  20000
+Failed transactions |  0
+Longest transaction |  0.06
+Shortest transaction |  0.00
 
 
 ## License ##
