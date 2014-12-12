@@ -129,3 +129,24 @@ $response = $auth->post('lists/destroy', $params);
 echo '<strong>lists/destroy</strong><br />';
 echo '<pre class="array">'; print_r($auth->getHeaders()); echo '</pre>';
 echo '<pre class="array">'; print_r($response); echo '</pre><hr />';
+
+// ==== ==== ==== //
+
+/**
+ * Reset Connection Without OAuth Tokens
+ */
+unset($auth, $credentials['oauth_token'], $credentials['oauth_token_secret']);
+
+$auth = new SingleUserAuth($credentials, new ArraySerializer());
+
+// ==== ==== ==== //
+
+$params = array(
+    'oauth_callback' => '',
+);
+
+$response = $auth->post('oauth/request_token', $params);
+
+echo '<strong>oauth/request_token</strong><br />';
+echo '<pre class="array">'; print_r($auth->getHeaders()); echo '</pre>';
+echo '<pre class="array">'; print_r($response); echo '</pre><hr />';

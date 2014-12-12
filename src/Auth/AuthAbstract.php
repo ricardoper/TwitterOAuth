@@ -138,7 +138,7 @@ abstract class AuthAbstract
 
         $response = $this->getResponse();
 
-        $this->findExceptions($response);
+        $response['body'] = $this->findExceptions($response);
 
         $this->headers = $response['headers'];
 
@@ -182,9 +182,13 @@ abstract class AuthAbstract
 
         $jsonExt = '.json';
 
-
         if (isset($this->withMedia) && $this->withMedia === true) {
             $domain = $this->urls['upload'];
+        }
+
+        if ($this->call === 'oauth/request_token') {
+            $apiVersion = '';
+            $jsonExt = '';
         }
 
         return $domain . $apiVersion . $this->call . $jsonExt;
@@ -213,6 +217,7 @@ abstract class AuthAbstract
      * Processing Twitter Exceptions in case of error
      *
      * @param array $response Raw response
+     * @return string
      * @throws TwitterException
      */
     protected function findExceptions($response)
@@ -222,7 +227,15 @@ abstract class AuthAbstract
         $data = json_decode($response, true);
 
         if (isset($response[0]) && $response[0] !== '{' && $response[0] !== '[' && !$data) {
-            throw new TwitterException($response, 0);
+            if (strpos($response, 'oauth_token=') !== false) {
+                parse_str($response, $data);
+            }
+
+            if (empty($data) || !is_array($data)) {
+                throw new TwitterException($response, 0);
+            }
+
+            return json_encode($data);
         }
 
         if (!empty($data['errors']) || !empty($data['error'])) {
@@ -241,7 +254,9 @@ abstract class AuthAbstract
             throw new TwitterException($data['message'], $data['code']);
         }
 
-        unset($response, $data);
+        unset($data);
+
+        return $response;
     }
 
     /**

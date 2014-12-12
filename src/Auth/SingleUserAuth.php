@@ -86,7 +86,7 @@ class SingleUserAuth extends AuthAbstract
 
         $response = $this->getResponse();
 
-        $this->findExceptions($response);
+        $response['body'] = $this->findExceptions($response);
 
         $this->headers = $response['headers'];
 
