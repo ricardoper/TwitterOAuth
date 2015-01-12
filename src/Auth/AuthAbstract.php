@@ -186,7 +186,7 @@ abstract class AuthAbstract
             $domain = $this->urls['upload'];
         }
 
-        if ($this->call === 'oauth/request_token') {
+        if ($this->call === 'oauth/request_token' || $this->call === 'oauth/access_token') {
             $apiVersion = '';
             $jsonExt = '';
         }
