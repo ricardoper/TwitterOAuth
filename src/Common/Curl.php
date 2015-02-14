@@ -58,7 +58,6 @@ class Curl
             CURLOPT_HEADER => true,
             CURLOPT_TIMEOUT => 60,
             CURLOPT_CONNECTTIMEOUT => 60,
-            CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
