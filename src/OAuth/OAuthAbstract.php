@@ -15,7 +15,7 @@ use TwitterOAuth\Serializers\ArraySerializer;
 use TwitterOAuth\Serializers\SerializerInterface;
 use TwitterOAuth\Exceptions\TwitterOAuthException;
 
-abstract class OAuthAbstract extends Container
+abstract class OAuthAbstract extends Container implements OAuthInterface
 {
 
     /**
