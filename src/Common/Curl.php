@@ -61,7 +61,6 @@ class Curl
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
-            CURLOPT_SSL_CIPHER_LIST => 'TLSv1',
             CURLOPT_CAINFO => dirname(__DIR__) . '/Certificates/rootca.pem',
             CURLOPT_USERAGENT => 'TwitterOAuth for v1.1 API (https://github.com/ricardoper/TwitterOAuth)',
 
