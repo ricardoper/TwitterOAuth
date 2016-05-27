@@ -41,6 +41,13 @@ The recommended way to install TwitterOAuth is through [Composer](http://getcomp
 **NOTE:** If you prefer v1 (One Single File), you can get it in [v1 branch](https://github.com/ricardoper/TwitterOAuth/tree/v1).<br/>
 <br/>
 
+## cURL Options ##
+After some complaints, I decided to give access to the default options of cURL. This changes solved every connections issues caused by cURL library.
+
+Please check the examples:
+- "SingleUser_With_cURL_Options.php"
+- "ApplicationOnly_With_cURL_Options.php"
+
 ## Examples ##
 Please, see the examples source code from "Examples" folder.<br/>
 <br/>
