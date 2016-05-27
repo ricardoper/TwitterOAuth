@@ -98,6 +98,14 @@ abstract class AuthAbstract
     }
 
     /**
+     * Get cURL Instance
+     */
+    public function getCurl()
+    {
+        return $this->curl;
+    }
+
+    /**
      * Get response headers
      *
      * @param null $key
