@@ -17,6 +17,34 @@ use TwitterOAuth\Exception\CurlException;
 
 class Curl
 {
+
+    /**
+     * cURL Options
+     */
+    protected $options;
+
+
+    /**
+     * Curl constructor
+     */
+    public function __construct()
+    {
+        // Set cURL default options //
+        $this->options = array(
+            CURLOPT_HEADER => true,
+            CURLOPT_TIMEOUT => 60,
+            CURLOPT_CONNECTTIMEOUT => 60,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_CAINFO => dirname(__DIR__) . '/Certificates/cacert.pem',
+
+            // FOR DEBUG ONLY - PROXY SETTINGS //
+            //CURLOPT_PROXY => '127.0.0.1',
+            //CURLOPT_PROXYPORT => 8888,
+        );
+    }
+
     /**
      * Send a request
      *
@@ -53,20 +81,12 @@ class Curl
 
 
         // Curl Options //
-        $options = array(
-            CURLOPT_URL => $url,
-            CURLOPT_HEADER => true,
-            CURLOPT_TIMEOUT => 60,
-            CURLOPT_CONNECTTIMEOUT => 60,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_SSL_VERIFYHOST => 2,
-            CURLOPT_CAINFO => dirname(__DIR__) . '/Certificates/rootca.pem',
-            CURLOPT_USERAGENT => 'TwitterOAuth for v1.1 API (https://github.com/ricardoper/TwitterOAuth)',
-
-            // FOR DEBUG ONLY - PROXY SETTINGS //
-            //CURLOPT_PROXY => '127.0.0.1',
-            //CURLOPT_PROXYPORT => 8888,
+        $options = array_replace(
+            $this->getOptions(),
+            array(
+                CURLOPT_URL => $url,
+                CURLOPT_USERAGENT => 'TwitterOAuth for v1.1 API (https://github.com/ricardoper/TwitterOAuth)',
+            )
         );
 
 
@@ -144,6 +164,29 @@ class Curl
         unset($params, $key, $value);
 
         return trim($r, '&');
+    }
+
+    /**
+     * Get cURL options
+     *
+     * @return mixed
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * Set cURL options
+     *
+     * @param array $options
+     * @return $this
+     */
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+
+        return $this;
     }
 
     /**
