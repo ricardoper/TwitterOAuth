@@ -8,6 +8,8 @@
  * @copyright 2016
  */
 
+use TwitterOAuth\Exceptions\CrawlerException;
+
 class CurlCrawler extends CrawlerAbstract
 {
 
@@ -49,7 +51,6 @@ class CurlCrawler extends CrawlerAbstract
         $this->options = array(
             CURLOPT_HEADER => true,
             CURLOPT_ENCODING => 'gzip',
-            CURLOPT_USERAGENT => $this->ua,
             CURLOPT_TIMEOUT => $this->timeout,
             CURLOPT_CONNECTTIMEOUT => $this->timeout,
             CURLOPT_RETURNTRANSFER => true,
@@ -71,6 +72,7 @@ class CurlCrawler extends CrawlerAbstract
      * </ul></p>
      *
      * @return string
+     * @throws CrawlerException
      */
     public function send(array $params)
     {
@@ -81,6 +83,10 @@ class CurlCrawler extends CrawlerAbstract
         curl_setopt_array($c, $options);
 
         $response = curl_exec($c);
+
+        if (curl_errno($c) !== 0) {
+            throw new CrawlerException('cURL: ' . curl_error($c), curl_errno($c));
+        }
 
         $info = curl_getinfo($c);
 
@@ -171,10 +177,14 @@ class CurlCrawler extends CrawlerAbstract
         $params = array_replace($defaults, $params);
 
 
-        // Set URL //
-        $options = [
-            CURLOPT_URL => $params['url']
-        ];
+        // Set Base Options //
+        $options = array_replace_recursive(
+            $this->options,
+            [
+                CURLOPT_URL => $params['url'],
+                CURLOPT_USERAGENT => $this->ua,
+            ]
+        );
 
         // Get Params //
         if (!empty($params['get']) && is_array($params['get'])) {
@@ -199,7 +209,7 @@ class CurlCrawler extends CrawlerAbstract
 
         unset($params, $defaults);
 
-        return array_replace_recursive($this->options, $options);
+        return $options;
     }
 
     /**

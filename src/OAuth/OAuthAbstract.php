@@ -8,14 +8,13 @@
  * @copyright 2016
  */
 
-use TwitterOAuth\Common\Container;
 use TwitterOAuth\Crawlers\CurlCrawler;
 use TwitterOAuth\Crawlers\CrawlerInterface;
 use TwitterOAuth\Serializers\ArraySerializer;
 use TwitterOAuth\Serializers\SerializerInterface;
 use TwitterOAuth\Exceptions\TwitterOAuthException;
 
-abstract class OAuthAbstract extends Container implements OAuthInterface
+abstract class OAuthAbstract implements OAuthInterface
 {
 
     /**
@@ -24,6 +23,20 @@ abstract class OAuthAbstract extends Container implements OAuthInterface
      * @var array
      */
     protected $credentials = null;
+
+    /**
+     * Crawler Instance
+     *
+     * @var CrawlerInterface
+     */
+    protected $crawler = null;
+
+    /**
+     * Serializer Instance
+     *
+     * @var SerializerInterface
+     */
+    protected $serializer = null;
 
 
     /**
@@ -42,6 +55,8 @@ abstract class OAuthAbstract extends Container implements OAuthInterface
         if ($credentials !== null) {
             $this->setCredentials($credentials);
 
+            $this->validateCredentials();
+
             unset($credentials);
         }
 
@@ -59,6 +74,8 @@ abstract class OAuthAbstract extends Container implements OAuthInterface
      * <li><b>oauthToken</b>: (string) Twitter Access token </li>
      * <li><b>oauthTokenSecret</b>: (string) Twitter Access token secret </li>
      * </ul></p>
+     *
+     * @return $this
      */
     public function setCredentials(array $credentials)
     {
@@ -69,9 +86,13 @@ abstract class OAuthAbstract extends Container implements OAuthInterface
             'oauthTokenSecret' => null,
         ];
 
-        $this->credentials = array_replace_recursive($defaults, $credentials);
+        $this->credentials = array_replace($defaults, $credentials);
+
+        $this->validateCredentials();
 
         unset($credentials, $defaults);
+
+        return $this;
     }
 
     /**
@@ -83,53 +104,53 @@ abstract class OAuthAbstract extends Container implements OAuthInterface
     }
 
     /**
-     * Set Crawler Closure or Interface
+     * Set Crawler Instance
      *
-     * @param \Closure|CrawlerInterface $crawler
-     * @throws TwitterOAuthException
+     * @param CrawlerInterface $crawler
+     * @return $this
      */
-    public function setCrawler($crawler)
+    public function setCrawler(CrawlerInterface $crawler)
     {
-        if (!($crawler instanceof \Closure && !($crawler instanceof CrawlerInterface))) {
-            throw new TwitterOAuthException('Crawler Required', 100);
-        }
+        $this->crawler = $crawler;
 
-        $this['crawler'] = $crawler;
+        unset($crawler);
+
+        return $this;
     }
 
     /**
-     * Get Crawler Object
+     * Get Crawler Instance
      *
      * @return CrawlerInterface
      */
     public function getCrawler()
     {
-        return $this['crawler'];
+        return $this->crawler;
     }
 
     /**
-     * Set Serializer Closure or Interface
+     * Set Serializer Instance
      *
-     * @param \Closure|SerializerInterface $serializer
-     * @throws TwitterOAuthException
+     * @param SerializerInterface $serializer
+     * @return $this
      */
-    public function setSerializer($serializer)
+    public function setSerializer(SerializerInterface $serializer)
     {
-        if (!($serializer instanceof \Closure && !($serializer instanceof SerializerInterface))) {
-            throw new TwitterOAuthException('Serializer Required', 101);
-        }
+        $this->serializer = $serializer;
 
-        $this['serializer'] = $serializer;
+        unset($serializer);
+
+        return $this;
     }
 
     /**
-     * Get Serializer Object
+     * Get Serializer Instance
      *
      * @return SerializerInterface
      */
     public function getSerializer()
     {
-        return $this['serializer'];
+        return $this->serializer;
     }
 
 
@@ -139,13 +160,39 @@ abstract class OAuthAbstract extends Container implements OAuthInterface
     protected function bootDependencies()
     {
         // CrawlerInterface //
-        $this['crawler'] = function() {
-            return new CurlCrawler();
-        };
+        $this->crawler = new CurlCrawler();
 
         // SerializerInterface //
-        $this['serializer'] = function() {
-            return new ArraySerializer();
-        };
+        $this->serializer = new ArraySerializer();
+    }
+
+    /**
+     * Credentials Validator
+     *
+     * @return bool
+     * @throws TwitterOAuthException
+     */
+    protected function validateCredentials()
+    {
+        $required = [
+            'consumerKey' => null,
+            'consumerSecret' => null,
+        ];
+
+
+        $notFound = [];
+
+        foreach ($required as $key) {
+            if (!array_key_exists($key, $this->credentials)) {
+                $notFound[] = $key;
+            }
+        }
+
+
+        if (!empty($notFound)) {
+            throw new TwitterOAuthException('Missing Credentials Field(s): ' . implode($notFound), 100);
+        }
+
+        return true;
     }
 }

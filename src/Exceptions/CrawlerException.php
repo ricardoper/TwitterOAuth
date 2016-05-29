@@ -1,4 +1,4 @@
-<?php namespace TwitterOAuth\Serializers;
+<?php namespace TwitterOAuth\Exceptions;
 
 /**
  * TwitterOAuth - https://github.com/ricardoper/TwitterOAuth
@@ -8,14 +8,6 @@
  * @copyright 2016
  */
 
-interface SerializerInterface
+class CrawlerException extends \Exception
 {
-
-    /**
-     * Format Output
-     *
-     * @param string $response
-     * @return mixed
-     */
-    public function format($response);
 }
